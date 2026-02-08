@@ -46,16 +46,16 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-white text-red-950">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-16">
         <div>
           <a
-            className="text-xs uppercase tracking-[0.3em] text-slate-300/70"
+            className="text-xs uppercase tracking-[0.3em] text-red-500/70"
             href="/"
           >
             Back to home
           </a>
-          <div className="text-xs uppercase tracking-[0.3em] text-emerald-200">
+          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
             Account
           </div>
           <h1 className="mt-3 font-[var(--font-display)] text-3xl">
@@ -63,24 +63,24 @@ export default function AccountPage() {
           </h1>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
+        <div className="rounded-3xl border border-red-200/70 bg-red-50 p-6 text-sm text-red-700/80">
           {status ? <div>{status}</div> : null}
           {user ? (
             <div className="space-y-2">
               <div>Signed in as {user.email}</div>
               <div>
                 Role: {profile?.role ? profile.role : "buyer"}{" "}
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-red-500/70">
                   (set at sign-up)
                 </span>
               </div>
               <button
-                className="mt-4 rounded-2xl bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-900"
+                className="mt-4 rounded-2xl bg-red-600 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white"
                 onClick={signOut}
               >
                 Sign out
               </button>
-              <div className="pt-4 text-xs text-slate-300/70">
+              <div className="pt-4 text-xs text-red-500/70">
                 Visit `/listings` to manage your ads.
               </div>
             </div>

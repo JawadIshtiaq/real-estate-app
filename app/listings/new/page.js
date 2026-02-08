@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabase } from "@/lib/supabaseClient";
+import LoadingOverlay from "@/components/loading-overlay";
 
 const defaultListing = {
   title: "",
@@ -14,13 +15,16 @@ const defaultListing = {
   city: "",
   neighborhood: "",
   hero_image_url: "",
+  contact_anonymous: true,
+  contact_name: "",
+  contact_phone: "",
 };
 
 const inputClass =
-  "h-12 w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white placeholder:text-slate-400 transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/30";
+  "h-12 w-full rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
 const textareaClass =
-  "min-h-[140px] w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-sm text-white placeholder:text-slate-400 transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/30";
-const labelClass = "text-xs uppercase tracking-[0.2em] text-slate-300/70";
+  "min-h-[140px] w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
+const labelClass = "text-xs uppercase tracking-[0.2em] text-red-500/70";
 
 export default function NewListingPage() {
   const supabase = getSupabase();
@@ -29,6 +33,7 @@ export default function NewListingPage() {
   const [form, setForm] = useState(defaultListing);
   const [files, setFiles] = useState([]);
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -61,14 +66,24 @@ export default function NewListingPage() {
       );
       return;
     }
+    setLoading(true);
     setStatus("Creating listing...");
+    if (!form.contact_phone) {
+      setStatus("Phone number is required.");
+      setLoading(false);
+      return;
+    }
     let uploadedUrls = [];
     const limitedFiles = files.slice(0, 6);
     if (limitedFiles.length) {
       setStatus("Uploading images...");
       const uploads = await Promise.all(
         limitedFiles.map(async (file) => {
-          const filePath = `${user.id}/${Date.now()}-${file.name}`;
+          const suffix =
+            typeof crypto !== "undefined" && crypto.randomUUID
+              ? crypto.randomUUID()
+              : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+          const filePath = `${user.id}/${suffix}-${file.name}`;
           const { error } = await supabase.storage
             .from("listing-images")
             .upload(filePath, file, { upsert: false });
@@ -85,6 +100,7 @@ export default function NewListingPage() {
       const failed = uploads.find((item) => item.error);
       if (failed?.error) {
         setStatus(failed.error.message);
+        setLoading(false);
         return;
       }
       uploadedUrls = uploads
@@ -100,6 +116,9 @@ export default function NewListingPage() {
       beds: Number(form.beds),
       baths: Number(form.baths),
       sqft: Number(form.sqft),
+      contact_anonymous: form.contact_anonymous,
+      contact_name: form.contact_anonymous ? null : form.contact_name,
+      contact_phone: form.contact_phone,
     };
     const { data: listingData, error } = await supabase
       .from("listings")
@@ -108,33 +127,43 @@ export default function NewListingPage() {
       .single();
     if (error) {
       setStatus(error.message);
+      setLoading(false);
     } else {
       if (listingData?.id && uploadedUrls.length) {
-        await supabase.from("listing_images").insert(
-          uploadedUrls.map((url, index) => ({
-            listing_id: listingData.id,
-            image_url: url,
-            sort_order: index,
-          }))
-        );
+        const { error: imageError } = await supabase
+          .from("listing_images")
+          .insert(
+            uploadedUrls.map((url, index) => ({
+              listing_id: listingData.id,
+              image_url: url,
+              sort_order: index,
+            }))
+          );
+        if (imageError) {
+          setStatus(`Listing created, but images failed: ${imageError.message}`);
+          setLoading(false);
+          return;
+        }
       }
-      setStatus("Listing created.");
+      setStatus("Listing created. Redirecting...");
       setForm(defaultListing);
       setFiles([]);
+      window.location.href = "/listings";
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-white text-red-950">
+      <LoadingOverlay show={loading} label="Processing listing..." />
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-16">
         <div>
           <a
-            className="text-xs uppercase tracking-[0.3em] text-slate-300/70"
+            className="text-xs uppercase tracking-[0.3em] text-red-500/70"
             href="/"
           >
             Back to home
           </a>
-          <div className="text-xs uppercase tracking-[0.3em] text-emerald-200">
+          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
             Sellers
           </div>
           <h1 className="mt-3 font-[var(--font-display)] text-3xl">
@@ -143,18 +172,18 @@ export default function NewListingPage() {
         </div>
 
         {!user ? (
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200/80">
+          <div className="rounded-3xl border border-red-200/70 bg-red-50 p-6 text-sm text-red-700">
             Sign in at `/sign-in` before creating listings.
           </div>
         ) : role !== "seller" && role !== "admin" ? (
-          <div className="rounded-3xl border border-amber-200/30 bg-amber-400/10 p-6 text-sm text-amber-100">
+          <div className="rounded-3xl border border-red-200/70 bg-red-50 p-6 text-sm text-red-700">
             Your account is set as a buyer. Create a new account as a seller if
             you want to post ads.
           </div>
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-6"
+            className="grid gap-4 rounded-3xl border border-red-200/70 bg-red-50 p-6"
           >
             <div className="grid gap-2">
               <label className={labelClass} htmlFor="title">
@@ -191,7 +220,7 @@ export default function NewListingPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="grid gap-2">
                 <label className={labelClass} htmlFor="price">
-                  Price (USD)
+                  Price (PKR)
                 </label>
                 <input
                   className={inputClass}
@@ -302,7 +331,7 @@ export default function NewListingPage() {
                 Upload listing images
               </label>
               <input
-                className="w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-sm text-slate-200/80 file:mr-4 file:rounded-full file:border-0 file:bg-emerald-400 file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.2em] file:text-slate-900 hover:file:bg-emerald-300"
+                className="w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-900 file:mr-4 file:rounded-full file:border-0 file:bg-red-600 file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.2em] file:text-white hover:file:bg-red-500"
                 id="image_uploads"
                 type="file"
                 accept="image/*"
@@ -311,8 +340,81 @@ export default function NewListingPage() {
                   setFiles(Array.from(event.target.files || []))
                 }
               />
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-red-500/70">
                 Upload up to 6 images. The first image becomes the hero image.
+              </div>
+            </div>
+            <div className="grid gap-4 rounded-2xl border border-red-200/70 bg-white p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <div className={labelClass}>Ad poster</div>
+                  <div className="text-xs text-red-500/70">
+                    Toggle anonymous or show your name. Phone is always required.
+                  </div>
+                </div>
+                <button
+                  className={`relative h-8 w-14 rounded-full border transition ${
+                    form.contact_anonymous
+                      ? "border-red-200 bg-red-100"
+                      : "border-red-500 bg-red-500/10"
+                  }`}
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      contact_anonymous: !prev.contact_anonymous,
+                    }))
+                  }
+                >
+                  <span
+                    className={`absolute top-1 h-6 w-6 rounded-full bg-white transition ${
+                      form.contact_anonymous ? "left-1" : "left-7"
+                    }`}
+                  />
+                </button>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {!form.contact_anonymous ? (
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="contact_name">
+                      Contact name
+                    </label>
+                    <input
+                      className={inputClass}
+                      id="contact_name"
+                      placeholder="Hamdard Estate"
+                      value={form.contact_name}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          contact_name: event.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div className="text-xs text-red-500/70">
+                    This ad will show as anonymous.
+                  </div>
+                )}
+                <div className="grid gap-2">
+                  <label className={labelClass} htmlFor="contact_phone">
+                    Phone number
+                  </label>
+                  <input
+                    className={inputClass}
+                    id="contact_phone"
+                    placeholder="+92 300 1234567"
+                    value={form.contact_phone}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        contact_phone: event.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </div>
               </div>
             </div>
             <div className="grid gap-2">
@@ -333,12 +435,12 @@ export default function NewListingPage() {
               </select>
             </div>
             <button
-              className="h-12 rounded-2xl bg-emerald-400 text-sm font-semibold text-slate-900 transition hover:bg-emerald-300 hover:shadow-[0_0_30px_rgba(52,211,153,0.35)]"
+              className="h-12 rounded-2xl bg-red-600 text-sm font-semibold text-white transition hover:bg-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.35)]"
               type="submit"
             >
               Create listing
             </button>
-            <div className="text-xs text-slate-200/70">{status}</div>
+            <div className="text-xs text-red-600/80">{status}</div>
           </form>
         )}
       </div>

@@ -15,7 +15,7 @@ function formatMoney(value) {
   if (!value && value !== 0) return "—";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "PKR",
     maximumFractionDigits: 0,
   }).format(value);
 }
@@ -93,24 +93,24 @@ export default function MarketplacePage() {
   }, [filters, supabase]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-white/10 bg-slate-950/70 backdrop-blur">
+    <div className="min-h-screen bg-white text-red-950">
+      <header className="border-b border-red-200/70 bg-white/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6">
           <div>
             <a
-              className="text-xs uppercase tracking-[0.3em] text-slate-300/70"
+              className="text-xs uppercase tracking-[0.3em] text-red-500/70"
               href="/"
             >
               Back to home
             </a>
-            <div className="text-xs uppercase tracking-[0.3em] text-emerald-200">
+            <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
               Marketplace
             </div>
             <h1 className="font-[var(--font-display)] text-3xl">
               Explore curated listings.
             </h1>
           </div>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-200/70">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-red-600/80">
             {!user ? (
               <>
                 <a
@@ -128,13 +128,13 @@ export default function MarketplacePage() {
               </>
             ) : null}
             <a
-              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white"
+              className="rounded-full border border-red-300 px-3 py-1 text-xs uppercase tracking-[0.2em] text-red-800"
               href="/listings"
             >
               My ads
             </a>
             <a
-              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white"
+              className="rounded-full border border-red-300 px-3 py-1 text-xs uppercase tracking-[0.2em] text-red-800"
               href="/listings/new"
             >
               Post an ad
@@ -145,9 +145,9 @@ export default function MarketplacePage() {
       </header>
 
       <section className="mx-auto w-full max-w-6xl space-y-8 px-6 py-12">
-        <div className="grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 lg:grid-cols-[1.5fr_0.7fr_0.7fr_0.6fr_0.6fr]">
+        <div className="grid gap-4 rounded-3xl border border-red-200/70 bg-red-50 p-6 lg:grid-cols-[1.5fr_0.7fr_0.7fr_0.6fr_0.6fr]">
           <input
-            className="h-12 rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white placeholder:text-slate-400"
+            className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
             placeholder="Search by city, neighborhood, or listing"
             value={filters.query}
             onChange={(event) =>
@@ -155,7 +155,7 @@ export default function MarketplacePage() {
             }
           />
           <input
-            className="h-12 rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white placeholder:text-slate-400"
+            className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
             placeholder="Min price"
             value={filters.minPrice}
             onChange={(event) =>
@@ -163,7 +163,7 @@ export default function MarketplacePage() {
             }
           />
           <input
-            className="h-12 rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white placeholder:text-slate-400"
+            className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
             placeholder="Max price"
             value={filters.maxPrice}
             onChange={(event) =>
@@ -171,7 +171,7 @@ export default function MarketplacePage() {
             }
           />
           <select
-            className="h-12 rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white"
+            className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900"
             value={filters.beds}
             onChange={(event) =>
               setFilters((prev) => ({ ...prev, beds: event.target.value }))
@@ -184,7 +184,7 @@ export default function MarketplacePage() {
             <option value="4">4+</option>
           </select>
           <select
-            className="h-12 rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white"
+            className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900"
             value={filters.status}
             onChange={(event) =>
               setFilters((prev) => ({ ...prev, status: event.target.value }))
@@ -198,27 +198,27 @@ export default function MarketplacePage() {
         </div>
 
         {error ? (
-          <div className="rounded-3xl border border-rose-400/30 bg-rose-500/10 p-6 text-sm text-rose-100">
+          <div className="rounded-3xl border border-red-300/60 bg-red-50 p-6 text-sm text-red-700">
             {error}
           </div>
         ) : null}
 
         <div className="grid gap-6 lg:grid-cols-3">
           {loading ? (
-            <div className="col-span-full rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-sm text-slate-200/70">
+            <div className="col-span-full rounded-3xl border border-red-200/70 bg-red-50 p-10 text-center text-sm text-red-600/80">
               Loading marketplace data...
             </div>
           ) : listings.length === 0 ? (
-            <div className="col-span-full rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-sm text-slate-200/70">
+            <div className="col-span-full rounded-3xl border border-red-200/70 bg-red-50 p-10 text-center text-sm text-red-600/80">
               No listings found. Adjust the filters or seed the database.
             </div>
           ) : (
             listings.map((listing) => (
               <article
                 key={listing.id}
-                className="rounded-[28px] border border-white/10 bg-white/5 p-6"
+                className="rounded-[28px] border border-red-200/70 bg-white p-6"
               >
-                <div className="h-40 rounded-2xl bg-gradient-to-br from-emerald-500/20 via-cyan-400/10 to-transparent">
+                <div className="h-40 rounded-2xl bg-red-50">
                   {listing.hero_image_url ? (
                     <img
                       alt={listing.title}
@@ -227,26 +227,26 @@ export default function MarketplacePage() {
                     />
                   ) : null}
                 </div>
-                <div className="mt-5 text-xs uppercase tracking-[0.2em] text-slate-300/70">
+                <div className="mt-5 text-xs uppercase tracking-[0.2em] text-red-500/70">
                   {listing.neighborhood || listing.city || "Citywide"}
                 </div>
                 <h2 className="mt-2 font-[var(--font-display)] text-xl">
                   {listing.title}
                 </h2>
-                <div className="mt-2 text-2xl font-semibold text-emerald-200">
+                <div className="mt-2 text-2xl font-semibold text-red-700">
                   {formatMoney(listing.price)}
                 </div>
-                <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-200/80">
+                <div className="mt-4 flex flex-wrap gap-4 text-sm text-red-700/80">
                   <span>{listing.beds} beds</span>
                   <span>{listing.baths} baths</span>
                   <span>{listing.sqft} sq ft</span>
                 </div>
-                <div className="mt-5 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-300/70">
-                  <span className="rounded-full border border-white/10 px-3 py-1">
+                <div className="mt-5 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-red-500/70">
+                  <span className="rounded-full border border-red-200 px-3 py-1">
                     {listing.status}
                   </span>
                   <a
-                    className="rounded-full border border-white/20 px-3 py-1 text-white"
+                    className="rounded-full border border-red-300 px-3 py-1 text-red-800"
                     href={`/marketplace/${listing.id}`}
                   >
                     View details

@@ -21,9 +21,19 @@ create table if not exists listings (
   city text,
   neighborhood text,
   hero_image_url text,
+  contact_anonymous boolean not null default true,
+  contact_name text,
+  contact_phone text,
   created_by uuid references profiles (id) default auth.uid(),
   created_at timestamptz not null default now()
 );
+
+alter table listings drop constraint if exists listings_contact_check;
+alter table listings
+  add constraint listings_contact_check
+  check (
+    contact_phone is not null
+  );
 
 create table if not exists listing_images (
   id uuid primary key default gen_random_uuid(),
@@ -124,6 +134,38 @@ drop policy if exists "Listing images readable" on listing_images;
 create policy "Listing images readable"
   on listing_images for select
   using (true);
+
+drop policy if exists "Sellers can insert listing images" on listing_images;
+create policy "Sellers can insert listing images"
+  on listing_images for insert
+  with check (
+    exists (
+      select 1 from listings
+      where listings.id = listing_images.listing_id
+        and listings.created_by = auth.uid()
+    )
+    or exists (
+      select 1 from profiles
+      where profiles.id = auth.uid()
+        and profiles.role = 'admin'
+    )
+  );
+
+drop policy if exists "Sellers can delete listing images" on listing_images;
+create policy "Sellers can delete listing images"
+  on listing_images for delete
+  using (
+    exists (
+      select 1 from listings
+      where listings.id = listing_images.listing_id
+        and listings.created_by = auth.uid()
+    )
+    or exists (
+      select 1 from profiles
+      where profiles.id = auth.uid()
+        and profiles.role = 'admin'
+    )
+  );
 
 drop policy if exists "Favorites readable by owner" on favorites;
 create policy "Favorites readable by owner"

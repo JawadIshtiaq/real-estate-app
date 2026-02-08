@@ -121,13 +121,41 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-red-950;
   }
   a,
   button {
     @apply transition;
   }
   button {
-    @apply hover:shadow-[0_0_30px_rgba(148,163,184,0.35)];
+    @apply hover:shadow-[0_0_30px_rgba(239,68,68,0.35)];
+  }
+}
+
+.loader {
+  height: 50px;
+  aspect-ratio: 2;
+  border: 10px solid #000;
+  box-sizing: border-box;
+  background:
+    radial-gradient(farthest-side, #fff 98%, #0000) left/20px 20px,
+    radial-gradient(farthest-side, #fff 98%, #0000) left/20px 20px,
+    radial-gradient(farthest-side, #fff 98%, #0000) center/20px 20px,
+    radial-gradient(farthest-side, #fff 98%, #0000) right/20px 20px,
+    #000;
+  background-repeat: no-repeat;
+  filter: blur(4px) contrast(10);
+  animation: l14 1s infinite;
+}
+
+@keyframes l14 {
+  0% {
+    background-position: left, left, center, right;
+  }
+  50% {
+    background-position: center, left, center, right;
+  }
+  100% {
+    background-position: right, left, center, right;
   }
 }

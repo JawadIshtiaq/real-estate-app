@@ -10,6 +10,7 @@ export default function SiteHeader() {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [status, setStatus] = useState("");
+  const [switchingRole, setSwitchingRole] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -32,6 +33,8 @@ export default function SiteHeader() {
 
   async function switchRole(nextRole) {
     if (!supabase || !user) return;
+    if (nextRole === role) return;
+    setSwitchingRole(true);
     setStatus("Updating...");
     const { error } = await supabase
       .from("profiles")
@@ -42,7 +45,11 @@ export default function SiteHeader() {
     } else {
       setRole(nextRole);
       setStatus("");
+      if (pathname && pathname.startsWith("/listings")) {
+        window.location.reload();
+      }
     }
+    setSwitchingRole(false);
   }
 
   async function signOut() {
@@ -53,7 +60,7 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/70 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-red-200/70 bg-white/90 backdrop-blur">
       <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-3">
           <a
@@ -71,7 +78,7 @@ export default function SiteHeader() {
             </button>
           ) : null}
         </div>
-        <div className="hidden items-center gap-6 text-xs uppercase tracking-[0.2em] text-slate-200/70 md:flex">
+        <div className="hidden items-center gap-6 text-xs uppercase tracking-[0.2em] text-red-700/70 md:flex">
           <a className="hover:text-white" href="/marketplace">
             Listings
           </a>
@@ -82,64 +89,70 @@ export default function SiteHeader() {
             Account
           </a>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em]">
-          {user ? (
-            <>
-              <div className="flex items-center gap-2">
-                <button
-                  className={`rounded-full border px-3 py-1 ${
-                    role === "buyer"
-                      ? "border-emerald-300 bg-emerald-300/20 text-emerald-100"
-                      : "border-white/20 text-slate-200/70"
-                  }`}
-                  onClick={() => switchRole("buyer")}
+          <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em]">
+            {user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <button
+                    className={`rounded-full border px-3 py-1 ${
+                      role === "buyer"
+                        ? "border-red-500 bg-red-500/10 text-red-800"
+                        : "border-red-200 text-red-700/70"
+                    }`}
+                    onClick={() => switchRole("buyer")}
+                    disabled={switchingRole}
+                  >
+                    Buyer
+                  </button>
+                  <button
+                    className={`rounded-full border px-3 py-1 ${
+                      role === "seller"
+                        ? "border-red-500 bg-red-500/10 text-red-800"
+                        : "border-red-200 text-red-700/70"
+                    }`}
+                    onClick={() => switchRole("seller")}
+                    disabled={switchingRole}
+                  >
+                    Seller
+                  </button>
+                </div>
+                <a
+                  className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                  href="/account"
                 >
-                  Buyer
-                </button>
+                  Account
+                </a>
                 <button
-                  className={`rounded-full border px-3 py-1 ${
-                    role === "seller"
-                      ? "border-emerald-300 bg-emerald-300/20 text-emerald-100"
-                      : "border-white/20 text-slate-200/70"
-                  }`}
-                  onClick={() => switchRole("seller")}
+                  className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                  onClick={signOut}
+                  disabled={switchingRole}
                 >
-                  Seller
+                  Sign out
                 </button>
-              </div>
-              <a
-                className="rounded-full border border-white/20 px-3 py-1 text-white"
-                href="/account"
-              >
-                Account
-              </a>
-              <button
-                className="rounded-full border border-white/20 px-3 py-1 text-white"
-                onClick={signOut}
-              >
-                Sign out
-              </button>
-              {status ? (
-                <span className="text-[10px] text-slate-400">{status}</span>
-              ) : null}
-            </>
-          ) : (
-            <>
-              <a
-                className="rounded-full border border-white/20 px-3 py-1 text-white"
-                href="/sign-in"
-              >
-                Sign in
-              </a>
-              <a
-                className="rounded-full bg-white px-3 py-1 text-slate-900"
-                href="/sign-up"
-              >
-                Sign up
-              </a>
-            </>
-          )}
-        </div>
+                {status ? (
+                  <span className="text-[10px] text-red-500">{status}</span>
+                ) : null}
+                {switchingRole ? (
+                  <span className="text-[10px] text-red-500">Updating...</span>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <a
+                  className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                  href="/sign-in"
+                >
+                  Sign in
+                </a>
+                <a
+                  className="rounded-full bg-red-600 px-3 py-1 text-white"
+                  href="/sign-up"
+                >
+                  Sign up
+                </a>
+              </>
+            )}
+          </div>
       </nav>
     </header>
   );

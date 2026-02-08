@@ -15,6 +15,8 @@ npm install
    - `supabase/storage.sql`
    - `supabase/seed.sql` (optional)
 
+3. Market data on the landing page is pulled live from BIS and Zameen.
+
 3. Create `.env.local` from `.env.local.example` and set:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`

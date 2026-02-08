@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getSupabase } from "@/lib/supabaseClient";
+import LoadingOverlay from "@/components/loading-overlay";
 
 const inputClass =
-  "h-12 w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 text-sm text-white placeholder:text-slate-400 transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/30";
+  "h-12 w-full rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
 const textareaClass =
-  "min-h-[140px] w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-sm text-white placeholder:text-slate-400 transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-300/30";
-const labelClass = "text-xs uppercase tracking-[0.2em] text-slate-300/70";
+  "min-h-[140px] w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
+const labelClass = "text-xs uppercase tracking-[0.2em] text-red-500/70";
 
 export default function EditListingPage() {
   const supabase = getSupabase();
@@ -17,6 +18,7 @@ export default function EditListingPage() {
   const [form, setForm] = useState(null);
   const [status, setStatus] = useState("Loading...");
   const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadListing() {
@@ -49,7 +51,7 @@ export default function EditListingPage() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, title, description, price, beds, baths, sqft, status, city, neighborhood, hero_image_url"
+          "id, title, description, price, beds, baths, sqft, status, city, neighborhood, hero_image_url, contact_anonymous, contact_name, contact_phone"
         )
         .eq("id", listingId)
         .maybeSingle();
@@ -70,6 +72,12 @@ export default function EditListingPage() {
         beds: data.beds?.toString() ?? "0",
         baths: data.baths?.toString() ?? "0",
         sqft: data.sqft?.toString() ?? "0",
+        contact_anonymous:
+          typeof data.contact_anonymous === "boolean"
+            ? data.contact_anonymous
+            : true,
+        contact_name: data.contact_name ?? "",
+        contact_phone: data.contact_phone ?? "",
       });
       setStatus("");
     }
@@ -83,6 +91,11 @@ export default function EditListingPage() {
     event.preventDefault();
     if (!supabase || !form) return;
     setStatus("Saving changes...");
+    if (!form.contact_phone) {
+      setStatus("Phone number is required.");
+      return;
+    }
+    setLoading(true);
     const payload = {
       title: form.title,
       description: form.description,
@@ -94,6 +107,9 @@ export default function EditListingPage() {
       city: form.city,
       neighborhood: form.neighborhood,
       hero_image_url: form.hero_image_url || null,
+      contact_anonymous: form.contact_anonymous,
+      contact_name: form.contact_anonymous ? null : form.contact_name,
+      contact_phone: form.contact_phone,
     };
 
     const { error } = await supabase
@@ -103,8 +119,10 @@ export default function EditListingPage() {
 
     if (error) {
       setStatus(error.message);
+      setLoading(false);
     } else {
       setStatus("Changes saved.");
+      setLoading(false);
     }
   }
 
@@ -125,8 +143,8 @@ export default function EditListingPage() {
 
   if (status && !form) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100">
-        <div className="mx-auto w-full max-w-2xl px-6 py-16 text-sm text-slate-200/70">
+      <div className="min-h-screen bg-white text-red-950">
+        <div className="mx-auto w-full max-w-2xl px-6 py-16 text-sm text-red-600/80">
           {status}
         </div>
       </div>
@@ -136,10 +154,11 @@ export default function EditListingPage() {
   if (!form) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-white text-red-950">
+      <LoadingOverlay show={loading} label="Saving changes..." />
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-16">
         <div>
-          <div className="text-xs uppercase tracking-[0.3em] text-emerald-200">
+          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
             Edit listing
           </div>
           <h1 className="mt-3 font-[var(--font-display)] text-3xl">
@@ -149,7 +168,7 @@ export default function EditListingPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-6"
+          className="grid gap-4 rounded-3xl border border-red-200/70 bg-red-50 p-6"
         >
           <div className="grid gap-2">
             <label className={labelClass} htmlFor="title">
@@ -184,7 +203,7 @@ export default function EditListingPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="grid gap-2">
               <label className={labelClass} htmlFor="price">
-                Price (USD)
+                Price (PKR)
               </label>
               <input
                 className={inputClass}
@@ -283,6 +302,77 @@ export default function EditListingPage() {
               }
             />
           </div>
+          <div className="grid gap-4 rounded-2xl border border-red-200/70 bg-white p-4">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className={labelClass}>Ad poster</div>
+                <div className="text-xs text-red-500/70">
+                  Toggle anonymous or show your name. Phone is always required.
+                </div>
+              </div>
+              <button
+                className={`relative h-8 w-14 rounded-full border transition ${
+                  form.contact_anonymous
+                    ? "border-red-200 bg-red-100"
+                    : "border-red-500 bg-red-500/10"
+                }`}
+                type="button"
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    contact_anonymous: !prev.contact_anonymous,
+                  }))
+                }
+              >
+                <span
+                  className={`absolute top-1 h-6 w-6 rounded-full bg-white transition ${
+                    form.contact_anonymous ? "left-1" : "left-7"
+                  }`}
+                />
+              </button>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {!form.contact_anonymous ? (
+                <div className="grid gap-2">
+                  <label className={labelClass} htmlFor="contact_name">
+                    Contact name
+                  </label>
+                  <input
+                    className={inputClass}
+                    id="contact_name"
+                    value={form.contact_name}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        contact_name: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+              ) : (
+                <div className="text-xs text-red-500/70">
+                  This ad will show as anonymous.
+                </div>
+              )}
+              <div className="grid gap-2">
+                <label className={labelClass} htmlFor="contact_phone">
+                  Phone number
+                </label>
+                <input
+                  className={inputClass}
+                  id="contact_phone"
+                  value={form.contact_phone}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      contact_phone: event.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+            </div>
+          </div>
           <div className="grid gap-2">
             <label className={labelClass} htmlFor="status">
               Status
@@ -301,19 +391,19 @@ export default function EditListingPage() {
             </select>
           </div>
           <button
-            className="h-12 rounded-2xl bg-emerald-400 text-sm font-semibold text-slate-900 transition hover:bg-emerald-300 hover:shadow-[0_0_30px_rgba(52,211,153,0.35)]"
+            className="h-12 rounded-2xl bg-red-600 text-sm font-semibold text-white transition hover:bg-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.35)]"
             type="submit"
           >
             Save changes
           </button>
           <button
-            className="h-12 rounded-2xl border border-rose-400/40 text-sm font-semibold text-rose-100 transition hover:border-rose-300 hover:shadow-[0_0_30px_rgba(248,113,113,0.35)]"
+            className="h-12 rounded-2xl border border-red-400/60 text-sm font-semibold text-red-700 transition hover:border-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.35)]"
             type="button"
             onClick={handleDelete}
           >
             Delete listing
           </button>
-          <div className="text-xs text-slate-200/70">{status}</div>
+          <div className="text-xs text-red-600/80">{status}</div>
         </form>
       </div>
     </div>
