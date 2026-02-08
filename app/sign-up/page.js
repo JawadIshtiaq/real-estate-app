@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabaseClient";
 import LoadingOverlay from "@/components/loading-overlay";
 
 export default function SignUpPage() {
   const supabase = getSupabase();
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +24,7 @@ export default function SignUpPage() {
     }
     setLoading(true);
     setStatus("Creating account...");
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -33,8 +35,13 @@ export default function SignUpPage() {
       setStatus(error.message);
       setLoading(false);
     } else {
-      setStatus("Account created. Check your email to confirm.");
-      setLoading(false);
+      if (data?.session) {
+        setStatus("Account created. Redirecting...");
+        router.replace("/marketplace");
+      } else {
+        setStatus("Account created. Check your email to confirm.");
+        setLoading(false);
+      }
     }
   }
 

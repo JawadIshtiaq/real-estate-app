@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabaseClient";
 import LoadingOverlay from "@/components/loading-overlay";
 
 export default function SignInPage() {
   const supabase = getSupabase();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
@@ -29,8 +31,8 @@ export default function SignInPage() {
       setStatus(error.message);
       setLoading(false);
     } else {
-      setStatus("Signed in. You can now visit /account or /listings/new.");
-      setLoading(false);
+      setStatus("Signed in. Redirecting...");
+      router.replace("/marketplace");
     }
   }
 
