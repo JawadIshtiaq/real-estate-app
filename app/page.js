@@ -315,7 +315,7 @@ export default function Home() {
       <footer className="mx-auto w-full max-w-6xl px-6 py-12 text-sm text-slate-200/70">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="font-[var(--font-display)] text-lg text-white">
-            Atria Homes
+            Hamdard Estate
           </div>
           <div className="flex flex-wrap gap-6 text-xs uppercase tracking-[0.2em]">
             <span>Privacy</span>
@@ -324,7 +324,7 @@ export default function Home() {
           </div>
         </div>
         <div className="mt-6 text-xs text-slate-400">
-          © 2026 Atria Homes. All rights reserved.
+          © 2026 Hamdard Estate. All rights reserved.
         </div>
       </footer>
     </div>

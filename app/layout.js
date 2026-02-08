@@ -14,9 +14,9 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Atria Homes | Signature Real Estate",
+  title: "Hamdard Estate | Signature Real Estate",
   description:
-    "Atria Homes pairs architectural standouts with data-driven market intelligence.",
+    "Hamdard Estate pairs architectural standouts with data-driven market intelligence.",
 };
 
 export default function RootLayout({ children }) {

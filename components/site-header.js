@@ -60,7 +60,7 @@ export default function SiteHeader() {
             className="font-[var(--font-display)] text-2xl tracking-tight"
             href="/"
           >
-            Atria Homes
+          Hamdard Estate
           </a>
           {pathname && pathname !== "/" ? (
             <button
