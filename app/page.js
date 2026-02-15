@@ -1,6 +1,6 @@
 import { getMarketSnapshot } from "@/lib/marketData";
 import { getSupabaseServer } from "@/lib/supabaseServer";
-import ishtiaqPhoto from "@/components/Ishtiaq.jpg";
+import ishtiaqPhoto from "@/components/Ishtiaq.png";
 import FawadPhoto from "@/public/Fawad.png";
 
 function formatMoney(value) {
