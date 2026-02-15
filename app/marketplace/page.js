@@ -55,7 +55,7 @@ export default function MarketplacePage() {
       let query = supabase
         .from("listings")
         .select(
-          "id, title, price, beds, baths, sqft, status, city, neighborhood, hero_image_url"
+          "id, title, price, beds, baths, sqft, area_unit, status, city, neighborhood, hero_image_url"
         )
         .order("created_at", { ascending: false });
 
@@ -239,7 +239,7 @@ export default function MarketplacePage() {
                 <div className="mt-4 flex flex-wrap gap-4 text-sm text-red-700/80">
                   <span>{listing.beds} beds</span>
                   <span>{listing.baths} baths</span>
-                  <span>{listing.sqft} sq ft</span>
+                  <span>{listing.sqft} {listing.area_unit || "sq ft"}</span>
                 </div>
                 <div className="mt-5 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-red-500/70">
                   <span className="rounded-full border border-red-200 px-3 py-1">

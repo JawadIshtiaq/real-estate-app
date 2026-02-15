@@ -51,7 +51,7 @@ export default function EditListingPage() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, title, description, price, beds, baths, sqft, status, city, neighborhood, hero_image_url, contact_anonymous, contact_name, contact_phone"
+          "id, title, description, price, beds, baths, sqft, area_unit, status, city, neighborhood, hero_image_url, contact_anonymous, contact_name, contact_phone"
         )
         .eq("id", listingId)
         .maybeSingle();
@@ -72,6 +72,7 @@ export default function EditListingPage() {
         beds: data.beds?.toString() ?? "0",
         baths: data.baths?.toString() ?? "0",
         sqft: data.sqft?.toString() ?? "0",
+        area_unit: data.area_unit ?? "sq ft",
         contact_anonymous:
           typeof data.contact_anonymous === "boolean"
             ? data.contact_anonymous
@@ -103,6 +104,7 @@ export default function EditListingPage() {
       beds: Number(form.beds),
       baths: Number(form.baths),
       sqft: Number(form.sqft),
+      area_unit: form.area_unit,
       status: form.status,
       city: form.city,
       neighborhood: form.neighborhood,
@@ -245,7 +247,7 @@ export default function EditListingPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="grid gap-2">
               <label className={labelClass} htmlFor="sqft">
-                Square feet
+                Area
               </label>
               <input
                 className={inputClass}
@@ -255,6 +257,27 @@ export default function EditListingPage() {
                   setForm((prev) => ({ ...prev, sqft: event.target.value }))
                 }
               />
+            </div>
+            <div className="grid gap-2">
+              <label className={labelClass} htmlFor="area_unit">
+                Area unit
+              </label>
+              <select
+                className={inputClass}
+                id="area_unit"
+                value={form.area_unit}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    area_unit: event.target.value,
+                  }))
+                }
+              >
+                <option value="sq ft">sq ft</option>
+                <option value="sq yards">sq yards</option>
+                <option value="marla">marla</option>
+                <option value="acre">acre</option>
+              </select>
             </div>
             <div className="grid gap-2">
               <label className={labelClass} htmlFor="city">

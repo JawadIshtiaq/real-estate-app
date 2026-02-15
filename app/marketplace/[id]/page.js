@@ -36,7 +36,7 @@ export default function ListingDetailPage() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, title, description, price, beds, baths, sqft, status, city, neighborhood, hero_image_url, contact_anonymous, contact_name, contact_phone"
+          "id, title, description, price, beds, baths, sqft, area_unit, status, city, neighborhood, hero_image_url, contact_anonymous, contact_name, contact_phone"
         )
         .eq("id", listingId)
         .maybeSingle();
@@ -127,7 +127,7 @@ export default function ListingDetailPage() {
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-red-700/80">
             <span>{listing.beds} beds</span>
             <span>{listing.baths} baths</span>
-            <span>{listing.sqft} sq ft</span>
+            <span>{listing.sqft} {listing.area_unit || "sq ft"}</span>
             <span className="rounded-full border border-red-200 px-3 py-1 text-xs uppercase tracking-[0.2em]">
               {listing.status}
             </span>

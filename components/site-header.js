@@ -64,10 +64,15 @@ export default function SiteHeader() {
       <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-3">
           <a
-            className="font-[var(--font-display)] text-2xl tracking-tight"
+            className="flex items-center gap-2 font-[var(--font-display)] text-2xl tracking-tight"
             href="/"
           >
-          Hamdard Estate
+            <img
+              src="/house-svgrepo-com.svg"
+              alt="Hamdard Estate"
+              className="h-8 w-8 rounded-md object-contain"
+            />
+            <span>Hamdard Estate</span>
           </a>
           {pathname && pathname !== "/" ? (
             <button

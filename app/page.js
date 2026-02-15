@@ -1,6 +1,7 @@
 import { getMarketSnapshot } from "@/lib/marketData";
 import { getSupabaseServer } from "@/lib/supabaseServer";
-import ishtiaqPhoto from "@/components/ishtiaq.jpeg";
+import ishtiaqPhoto from "@/components/Ishtiaq.jpg";
+import FawadPhoto from "@/public/Fawad.png";
 
 function formatMoney(value) {
   if (value == null) return "—";
@@ -54,12 +55,12 @@ const neighborhoods = [
     vibe: "Coastal living, upscale apartments, and premium amenities.",
   },
   {
-    name: "Gulshan & Gulistan",
-    homes: "Karachi East",
+    name: "DHA City",
+    homes: "Karachi North",
     vibe: "Family-friendly streets with parks and schools nearby.",
   },
   {
-    name: "North Nazimabad",
+    name: "Bahria Town",
     homes: "Karachi Central",
     vibe: "Established neighborhoods with classic architecture.",
   },
@@ -70,19 +71,37 @@ const team = [
     name: "Muhammad Ishtiaq Khan",
     role: "Founder & Managing Director",
     bio: "Leads strategic growth and premium listings across Karachi.",
+    phone: "+92 300 2000340",
+    whatsapp: "https://wa.me/923002000340",
+    facebook: "https://www.facebook.com/share/1GqdmNSbEo/?mibextid=wwXIfr",
     photo: ishtiaqPhoto.src,
   },
   {
     name: "Muhammad Naseer Khan",
     role: "Managing Partner",
     bio: "Focused on buyer journeys, negotiation, and relocation strategy.",
+    phone: "+92 300 2199385",
+    whatsapp: "https://wa.me/923002199385",
+    facebook: "https://facebook.com/muhammadnaseer.khan.161",
     photo: "",
   },
   {
     name: "Muhammad Amjad Khan",
     role: "Managing Partner",
-    bio: "Tracks Karachi and national trends with data-first insights.",
+    bio: "Tracks Karachi and national trends with apartment rent and sale data-first insights.",
+    phone: "+92 300 2223460",
+    whatsapp: "https://wa.me/923002223460",
+    facebook: "https://facebook.com/smamjad124",
     photo: "",
+  },  
+  {
+    name: "Muhammad Fawad Ishtiaq",
+    role: "Bungalow Sale/Rent Consultant",
+    bio: "Bungalow and Bungalow Portion Sale & Rent Consultant/Advisor",
+    phone: "+92 301 8289888",
+    whatsapp: "https://wa.me/923018289888",
+    facebook: "https://facebook.com/fawad.khan.211436",
+    photo: FawadPhoto.src,
   },
 ];
 
@@ -94,7 +113,7 @@ export default async function Home() {
     const { data } = await supabase
       .from("listings")
       .select(
-        "id, title, price, beds, baths, sqft, status, city, neighborhood, hero_image_url"
+        "id, title, price, beds, baths, sqft, area_unit, status, city, neighborhood, hero_image_url"
       )
       .order("created_at", { ascending: false })
       .limit(3);
@@ -102,178 +121,10 @@ export default async function Home() {
       featuredListings = data;
     }
   }
-  const bis = market?.bis;
-  const karachi = market?.karachi;
-  const pakistan = market?.pakistan;
   const news = market?.news ?? [];
-  const globalYoy =
-    bis?.globalYoy != null ? `${bis.globalYoy}%` : "Data unavailable";
-  const aeYoy = bis?.aeYoy != null ? `${bis.aeYoy}%` : "Data unavailable";
-  const emeYoy = bis?.emeYoy != null ? `${bis.emeYoy}%` : "Data unavailable";
-  const bisPeriod = bis?.period ? `(${bis.period})` : "";
-  const primaryPulse = karachi?.avgPrice
-    ? {
-        title: "Karachi average price",
-        value: karachi.avgPrice,
-        note: `${karachi?.period ? `Updated ${karachi.period}` : ""}${
-          karachi?.oneYearChange ? ` · 1Y ${karachi.oneYearChange}` : ""
-        }`,
-      }
-    : pakistan?.avgPrice
-    ? {
-        title: "Pakistan average price",
-        value: pakistan.avgPrice,
-        note: `${pakistan?.period ? `Updated ${pakistan.period}` : ""}${
-          pakistan?.oneYearChange ? ` · 1Y ${pakistan.oneYearChange}` : ""
-        }`,
-      }
-    : {
-        title: "Global real prices (YoY)",
-        value: globalYoy,
-        note: bisPeriod ? `Source: BIS ${bisPeriod}` : "Source: BIS",
-      };
-  const secondaryPulse = pakistan?.avgPrice
-    ? {
-        title: "Pakistan average price",
-        value: pakistan.avgPrice,
-        note: `${pakistan?.period ? `Updated ${pakistan.period}` : ""}${
-          pakistan?.oneYearChange ? ` · 1Y ${pakistan.oneYearChange}` : ""
-        }`,
-      }
-    : bis?.aeYoy
-    ? {
-        title: "Advanced economies (YoY)",
-        value: aeYoy,
-        note: bisPeriod ? `Source: BIS ${bisPeriod}` : "Source: BIS",
-      }
-    : {
-        title: "Emerging markets (YoY)",
-        value: emeYoy,
-        note: bisPeriod ? `Source: BIS ${bisPeriod}` : "Source: BIS",
-      };
 
   return (
     <div className="min-h-screen bg-white text-red-950">
-      <div className="relative overflow-hidden">
-        <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-gradient-to-br from-red-500/25 via-rose-400/20 to-transparent blur-3xl" />
-        <div className="absolute left-0 top-32 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-red-300/25 via-rose-200/10 to-transparent blur-3xl" />
-
-        <section className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-200/70 bg-red-50 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-600">
-              Signature Real Estate
-            </div>
-            <h1 className="font-[var(--font-display)] text-4xl leading-tight sm:text-5xl lg:text-6xl">
-              Homes that feel curated for the life you want to live.
-            </h1>
-            <p className="max-w-xl text-base text-red-700/80 sm:text-lg">
-              Hamdard Estate pairs architectural standouts with data-driven market
-              intelligence, so every move feels intentional, confident, and
-              exquisitely timed.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-500">
-                Explore listings
-              </button>
-              <a
-                className="rounded-full border border-red-300 px-6 py-3 text-sm font-semibold text-red-800 transition hover:border-red-400"
-                href="/marketplace"
-              >
-                Open marketplace
-              </a>
-              <button className="rounded-full border border-red-300 px-6 py-3 text-sm font-semibold text-red-800 transition hover:border-red-400">
-                Talk to an advisor
-              </button>
-            </div>
-
-            <div className="grid gap-6 rounded-3xl border border-red-200/70 bg-red-50 p-6">
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <div className="text-sm text-red-600/80">
-                    Global real prices (YoY) {bisPeriod}
-                  </div>
-                  <div className="text-2xl font-semibold">{globalYoy}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-red-600/80">
-                    Advanced economies (YoY) {bisPeriod}
-                  </div>
-                  <div className="text-2xl font-semibold">{aeYoy}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-red-600/80">
-                    Emerging markets (YoY) {bisPeriod}
-                  </div>
-                  <div className="text-2xl font-semibold">{emeYoy}</div>
-                </div>
-              </div>
-              <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-                <input
-                  className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
-                  placeholder="City or neighborhood"
-                />
-                <input
-                  className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
-                  placeholder="Price range"
-                />
-                <button className="h-12 rounded-2xl bg-red-600 px-6 text-sm font-semibold text-white transition hover:bg-red-500">
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="rounded-[32px] border border-red-200/70 bg-white p-6">
-              <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-red-500/70">
-                <span>Market pulse</span>
-                <span>Live</span>
-              </div>
-              <div className="mt-6 space-y-4">
-                <div className="rounded-3xl border border-red-200/70 bg-red-50 p-5">
-                  <div className="text-sm text-red-700/80">
-                    {primaryPulse.title}
-                  </div>
-                  <div className="mt-2 text-3xl font-semibold">
-                    {primaryPulse.value || "Data unavailable"}
-                  </div>
-                  <div className="mt-3 text-xs text-red-500/80">
-                    {primaryPulse.note}
-                  </div>
-                </div>
-                <div className="rounded-3xl border border-red-200/70 bg-red-50 p-5">
-                  <div className="text-sm text-red-700/80">
-                    {secondaryPulse.title}
-                  </div>
-                  <div className="mt-2 text-2xl font-semibold">
-                    {secondaryPulse.value || "Data unavailable"}
-                  </div>
-                  <div className="mt-3 text-xs text-red-500/80">
-                    {secondaryPulse.note}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[32px] border border-red-200/70 bg-red-50 p-6">
-              <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
-                Concierge
-              </div>
-              <p className="mt-4 text-sm text-red-700/80">
-                Curated tours, architectural insights, and bespoke relocation
-                services designed around your calendar.
-              </p>
-              <p className="mt-4 text-xs text-red-500/70">
-                Sources: BIS residential property prices and Zameen Index.
-              </p>
-              <button className="mt-6 rounded-full border border-red-300 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-800 transition hover:border-red-400">
-                View services
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
-
       <section className="mx-auto w-full max-w-6xl space-y-10 px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -324,7 +175,7 @@ export default async function Home() {
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-red-700/80">
                 <span>{listing.beds} beds</span>
                 <span>{listing.baths} baths</span>
-                <span>{listing.sqft} sq ft</span>
+                <span>{listing.sqft} {listing.area_unit || "sq ft"}</span>
               </div>
               <a
                 className="mt-6 block w-full rounded-2xl bg-red-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-red-500"
@@ -336,6 +187,75 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <div className="relative overflow-hidden">
+        <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-gradient-to-br from-red-500/25 via-rose-400/20 to-transparent blur-3xl" />
+        <div className="absolute left-0 top-32 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-red-300/25 via-rose-200/10 to-transparent blur-3xl" />
+
+        <section className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-red-200/70 bg-red-50 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-600">
+              Signature Real Estate
+            </div>
+            <h1 className="font-[var(--font-display)] text-4xl leading-tight sm:text-5xl lg:text-6xl">
+              Homes that feel curated for the life you want to live.
+            </h1>
+            <p className="max-w-xl text-base text-red-700/80 sm:text-lg">
+              Hamdard Estate pairs architectural standouts with data-driven market
+              intelligence, so every move feels intentional, confident, and
+              exquisitely timed.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-500">
+                Explore listings
+              </button>
+              <a
+                className="rounded-full border border-red-300 px-6 py-3 text-sm font-semibold text-red-800 transition hover:border-red-400"
+                href="/marketplace"
+              >
+                Open marketplace
+              </a>
+              <button className="rounded-full border border-red-300 px-6 py-3 text-sm font-semibold text-red-800 transition hover:border-red-400">
+                Talk to an advisor
+              </button>
+            </div>
+
+            <div className="grid gap-6 rounded-3xl border border-red-200/70 bg-red-50 p-6">
+              <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+                <input
+                  className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
+                  placeholder="City or neighborhood"
+                />
+                <input
+                  className="h-12 rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300"
+                  placeholder="Price range"
+                />
+                <button className="h-12 rounded-2xl bg-red-600 px-6 text-sm font-semibold text-white transition hover:bg-red-500">
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-[32px] border border-red-200/70 bg-red-50 p-6">
+              <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+                Concierge
+              </div>
+              <p className="mt-4 text-sm text-red-700/80">
+                Curated tours, architectural insights, and bespoke relocation
+                services designed around your calendar.
+              </p>
+              <p className="mt-4 text-xs text-red-500/70">
+                Updated monthly from internal market briefing.
+              </p>
+              <button className="mt-6 rounded-full border border-red-300 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-800 transition hover:border-red-400">
+                View services
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <section className="bg-red-50 py-20">
         <div className="mx-auto w-full max-w-6xl space-y-10 px-6">
@@ -369,7 +289,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl space-y-10 px-6 py-20">
+      <section id="team" className="mx-auto w-full max-w-6xl space-y-10 px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
@@ -416,6 +336,31 @@ export default async function Home() {
               </div>
               <div className="mt-4 text-sm font-semibold">{member.name}</div>
               <div className="text-xs text-red-600/80">{member.role}</div>
+              <a
+                className="mt-1 inline-block text-xs text-red-600/80 underline decoration-red-300 underline-offset-2 transition hover:text-red-800"
+                href={`tel:${member.phone.replace(/\s+/g, "")}`}
+                aria-label={`Call ${member.name} at ${member.phone}`}
+              >
+                {member.phone}
+              </a>
+              <div className="mt-3 flex gap-2">
+                <a
+                  className="rounded-full border border-red-300 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-red-800 transition hover:border-red-400"
+                  href={member.whatsapp}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  WhatsApp
+                </a>
+                <a
+                  className="rounded-full border border-red-300 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-red-800 transition hover:border-red-400"
+                  href={member.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Facebook
+                </a>
+              </div>
               <p className="mt-3 text-xs text-red-600/80">{member.bio}</p>
             </div>
           ))}
@@ -433,9 +378,9 @@ export default async function Home() {
             </h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            {(news.length ? news.slice(0, 6) : []).map((item) => (
+            {(news.length ? news.slice(0, 6) : []).map((item, index) => (
               <a
-                key={item.link}
+                key={`${item.source}-${item.title}-${index}`}
                 className="rounded-2xl border border-red-200/70 bg-red-50 p-4 text-sm text-red-800 transition hover:border-red-300"
                 href={item.link}
                 target="_blank"
@@ -474,9 +419,12 @@ export default async function Home() {
             inventory before it hits the market.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white">
+            <a
+              className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white"
+              href="#team"
+            >
               Start a consultation
-            </button>
+            </a>
             <button className="rounded-full border border-red-300 px-6 py-3 text-sm font-semibold text-red-900">
               Download market report
             </button>

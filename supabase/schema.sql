@@ -17,6 +17,7 @@ create table if not exists listings (
   beds int not null default 0,
   baths int not null default 0,
   sqft int not null default 0,
+  area_unit text not null default 'sq ft' check (area_unit in ('sq ft', 'sq yards', 'marla', 'acre')),
   status text not null default 'active' check (status in ('active', 'pending', 'sold')),
   city text,
   neighborhood text,
@@ -27,6 +28,14 @@ create table if not exists listings (
   created_by uuid references profiles (id) default auth.uid(),
   created_at timestamptz not null default now()
 );
+
+alter table listings
+  add column if not exists area_unit text not null default 'sq ft';
+
+alter table listings drop constraint if exists listings_area_unit_check;
+alter table listings
+  add constraint listings_area_unit_check
+  check (area_unit in ('sq ft', 'sq yards', 'marla', 'acre'));
 
 alter table listings drop constraint if exists listings_contact_check;
 alter table listings

@@ -11,6 +11,7 @@ const defaultListing = {
   beds: 0,
   baths: 0,
   sqft: 0,
+  area_unit: "sq ft",
   status: "active",
   city: "",
   neighborhood: "",
@@ -116,6 +117,7 @@ export default function NewListingPage() {
       beds: Number(form.beds),
       baths: Number(form.baths),
       sqft: Number(form.sqft),
+      area_unit: form.area_unit,
       contact_anonymous: form.contact_anonymous,
       contact_name: form.contact_anonymous ? null : form.contact_name,
       contact_phone: form.contact_phone,
@@ -265,7 +267,7 @@ export default function NewListingPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="grid gap-2">
                 <label className={labelClass} htmlFor="sqft">
-                  Square feet
+                  Area
                 </label>
                 <input
                   className={inputClass}
@@ -276,6 +278,27 @@ export default function NewListingPage() {
                     setForm((prev) => ({ ...prev, sqft: event.target.value }))
                   }
                 />
+              </div>
+              <div className="grid gap-2">
+                <label className={labelClass} htmlFor="area_unit">
+                  Area unit
+                </label>
+                <select
+                  className={inputClass}
+                  id="area_unit"
+                  value={form.area_unit}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      area_unit: event.target.value,
+                    }))
+                  }
+                >
+                  <option value="sq ft">sq ft</option>
+                  <option value="sq yards">sq yards</option>
+                  <option value="marla">marla</option>
+                  <option value="acre">acre</option>
+                </select>
               </div>
               <div className="grid gap-2">
                 <label className={labelClass} htmlFor="city">

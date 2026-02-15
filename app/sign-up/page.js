@@ -39,7 +39,7 @@ export default function SignUpPage() {
         setStatus("Account created. Redirecting...");
         router.replace("/marketplace");
       } else {
-        setStatus("Account created. Check your email to confirm.");
+        setStatus("Account created. Check your email to confirm. Check spam as well.");
         setLoading(false);
       }
     }
@@ -99,7 +99,17 @@ export default function SignUpPage() {
           >
             Create account
           </button>
-          <div className="text-xs text-red-600/80">{status}</div>
+          <div className="text-xs text-red-600/80">
+            {status ===
+            "Account created. Check your email to confirm. Check spam as well." ? (
+              <>
+                Account created. Check your email to confirm.{" "}
+                <strong>Check spam as well.</strong>
+              </>
+            ) : (
+              status
+            )}
+          </div>
         </form>
       </div>
     </div>
