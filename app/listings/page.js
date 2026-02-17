@@ -10,6 +10,7 @@ export default function ListingsDashboard() {
   const [listings, setListings] = useState([]);
   const [status, setStatus] = useState("Loading...");
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -66,6 +67,35 @@ export default function ListingsDashboard() {
     loadDashboard();
   }, [supabase]);
 
+  async function handleQuickDelete(listing) {
+    if (!supabase || !user?.id || deletingId) return;
+
+    const confirmed = window.confirm(
+      "Delete this listing? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    setDeletingId(listing.id);
+    setStatus("Deleting listing...");
+
+    const { error } = await supabase
+      .from("listings")
+      .delete()
+      .eq("id", listing.id)
+      .eq("created_by", user.id);
+
+    if (error) {
+      setStatus(error.message);
+      setDeletingId(null);
+      return;
+    }
+
+    setListings((prev) => prev.filter((item) => item.id !== listing.id));
+    setStatus("");
+    setDeletingId(null);
+  }
+
   return (
     <div className="min-h-screen bg-white text-red-950">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-16">
@@ -84,12 +114,12 @@ export default function ListingsDashboard() {
               Your ads
             </h1>
           </div>
-            <a
-              className="rounded-full border border-red-300 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-800"
-              href="/listings/new"
-            >
-              Post a new ad
-            </a>
+          <a
+            className="rounded-full border border-red-300 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-800"
+            href="/listings/new"
+          >
+            Post a new ad
+          </a>
         </div>
 
         {status ? (
@@ -105,47 +135,59 @@ export default function ListingsDashboard() {
                 No listings yet. Post your first ad.
               </div>
             ) : (
-              listings.map((listing) => (
-                <div
-                  key={listing.id}
-                  className="rounded-3xl border border-red-200/70 bg-white p-6"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <div className="text-xs uppercase tracking-[0.2em] text-red-500/70">
-                        {listing.neighborhood || listing.city || "Citywide"}
+              listings.map((listing) => {
+                const isDeleting = deletingId === listing.id;
+
+                return (
+                  <div
+                    key={listing.id}
+                    className="rounded-3xl border border-red-200/70 bg-white p-6"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <div className="text-xs uppercase tracking-[0.2em] text-red-500/70">
+                          {listing.neighborhood || listing.city || "Citywide"}
+                        </div>
+                        <div className="mt-2 text-lg font-semibold">
+                          {listing.title}
+                        </div>
                       </div>
-                      <div className="mt-2 text-lg font-semibold">
-                        {listing.title}
+                      <div className="text-sm text-red-700">
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "PKR",
+                          maximumFractionDigits: 0,
+                        }).format(Number(listing.price))}
                       </div>
                     </div>
-                    <div className="text-sm text-red-700">
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "PKR",
-                        maximumFractionDigits: 0,
-                      }).format(Number(listing.price))}
+                    <div className="mt-4 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-red-500/70">
+                      <span className="rounded-full border border-red-200 px-3 py-1">
+                        {listing.status}
+                      </span>
+                      <a
+                        className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                        href={`/marketplace/${listing.id}`}
+                      >
+                        View details
+                      </a>
+                      <a
+                        className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                        href={`/listings/${listing.id}/edit`}
+                      >
+                        Edit
+                      </a>
+                      <button
+                        className="rounded-full border border-red-600 bg-red-600 px-3 py-1 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={Boolean(deletingId)}
+                        onClick={() => handleQuickDelete(listing)}
+                        type="button"
+                      >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </button>
                     </div>
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-red-500/70">
-                    <span className="rounded-full border border-red-200 px-3 py-1">
-                      {listing.status}
-                    </span>
-                    <a
-                      className="rounded-full border border-red-300 px-3 py-1 text-red-800"
-                      href={`/marketplace/${listing.id}`}
-                    >
-                      View details
-                    </a>
-                    <a
-                      className="rounded-full border border-red-300 px-3 py-1 text-red-800"
-                      href={`/listings/${listing.id}/edit`}
-                    >
-                      Edit
-                    </a>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         ) : null}
@@ -153,3 +195,4 @@ export default function ListingsDashboard() {
     </div>
   );
 }
+

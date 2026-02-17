@@ -1,6 +1,6 @@
 import { getMarketSnapshot } from "@/lib/marketData";
 import { getSupabaseServer } from "@/lib/supabaseServer";
-import ishtiaqPhoto from "@/components/Ishtiaq.png";
+import ishtiaqPhoto from "@/components/ishtiaq-new.jpeg";
 import FawadPhoto from "@/public/Fawad.png";
 
 function formatMoney(value) {
@@ -425,9 +425,6 @@ export default async function Home() {
             >
               Start a consultation
             </a>
-            <button className="rounded-full border border-red-300 px-6 py-3 text-sm font-semibold text-red-900">
-              Download market report
-            </button>
           </div>
         </div>
       </section>

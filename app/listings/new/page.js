@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import { getSupabase } from "@/lib/supabaseClient";
 import LoadingOverlay from "@/components/loading-overlay";
 
+const DIRECT_UPLOAD_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
+const HEIC_IMAGE_TYPES = ["image/heic", "image/heif"];
+const SUPPORTED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic", ".heif"];
+
 const defaultListing = {
   title: "",
   description: "",
@@ -35,6 +45,81 @@ export default function NewListingPage() {
   const [files, setFiles] = useState([]);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [contactDefaults, setContactDefaults] = useState({
+    name: "",
+    phone: "",
+  });
+
+  function hasSupportedExtension(fileName) {
+    const lower = String(fileName || "").toLowerCase();
+    return SUPPORTED_EXTENSIONS.some((ext) => lower.endsWith(ext));
+  }
+
+  function isHeicFile(file) {
+    return (
+      HEIC_IMAGE_TYPES.includes(file.type) ||
+      /\.(heic|heif)$/i.test(String(file?.name || ""))
+    );
+  }
+
+  function isSupportedSourceFile(file) {
+    return (
+      DIRECT_UPLOAD_IMAGE_TYPES.includes(file.type) ||
+      isHeicFile(file) ||
+      hasSupportedExtension(file?.name)
+    );
+  }
+
+  function buildUploadName(file, suffix) {
+    const original = file?.name ? String(file.name) : "";
+    const safe = original
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+    const hasExt = /\.[a-z0-9]+$/.test(safe);
+    const ext = hasExt ? "" : ".jpg";
+    return `${suffix}-${safe || "listing-image"}${ext}`;
+  }
+
+  async function convertHeicToJpeg(file) {
+    const { default: heic2any } = await import("heic2any");
+    const result = await heic2any({
+      blob: file,
+      toType: "image/jpeg",
+      quality: 0.9,
+    });
+    const convertedBlob = Array.isArray(result) ? result[0] : result;
+    const baseName = String(file?.name || "listing-image").replace(
+      /\.(heic|heif)$/i,
+      ""
+    );
+    return new File([convertedBlob], `${baseName}.jpg`, {
+      type: "image/jpeg",
+    });
+  }
+
+  function handleFileChange(event) {
+    const selectedFiles = Array.from(event.target.files || []);
+    const validFiles = selectedFiles.filter((file) =>
+      isSupportedSourceFile(file)
+    );
+    const rejectedCount = selectedFiles.length - validFiles.length;
+
+    setFiles(validFiles.slice(0, 6));
+
+    if (rejectedCount > 0) {
+      setStatus(
+        "Some images were skipped. Use JPG, PNG, WEBP, GIF, or HEIC/HEIF."
+      );
+    } else if (validFiles.length > 6) {
+      setStatus("Only the first 6 images will be uploaded.");
+    } else if (selectedFiles.length) {
+      setStatus(`${Math.min(validFiles.length, 6)} image(s) selected.`);
+    } else {
+      setStatus("");
+    }
+  }
 
   useEffect(() => {
     async function loadUser() {
@@ -50,10 +135,40 @@ export default function NewListingPage() {
       if (authUser) {
         const { data: profileData } = await supabase
           .from("profiles")
-          .select("role")
+          .select("role, full_name")
           .eq("id", authUser.id)
           .maybeSingle();
         setRole(profileData?.role ?? "buyer");
+
+        const { data: latestListing } = await supabase
+          .from("listings")
+          .select("contact_name, contact_phone")
+          .eq("created_by", authUser.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const defaultName =
+          profileData?.full_name ||
+          authUser?.user_metadata?.full_name ||
+          latestListing?.contact_name ||
+          "";
+        const defaultPhone =
+          authUser?.phone ||
+          authUser?.user_metadata?.phone ||
+          authUser?.user_metadata?.contact_phone ||
+          latestListing?.contact_phone ||
+          "";
+
+        setContactDefaults({
+          name: defaultName,
+          phone: defaultPhone,
+        });
+        setForm((prev) => ({
+          ...prev,
+          contact_name: prev.contact_name || defaultName,
+          contact_phone: prev.contact_phone || defaultPhone,
+        }));
       }
     }
     loadUser();
@@ -77,17 +192,39 @@ export default function NewListingPage() {
     let uploadedUrls = [];
     const limitedFiles = files.slice(0, 6);
     if (limitedFiles.length) {
+      setStatus("Preparing images...");
+      const preparedFiles = [];
+
+      for (const file of limitedFiles) {
+        if (isHeicFile(file)) {
+          try {
+            const converted = await convertHeicToJpeg(file);
+            preparedFiles.push(converted);
+          } catch (error) {
+            setStatus("Failed to convert one HEIC image. Please try JPG/PNG for that file.");
+            setLoading(false);
+            return;
+          }
+        } else {
+          preparedFiles.push(file);
+        }
+      }
+
       setStatus("Uploading images...");
       const uploads = await Promise.all(
-        limitedFiles.map(async (file) => {
+        preparedFiles.map(async (file) => {
           const suffix =
             typeof crypto !== "undefined" && crypto.randomUUID
               ? crypto.randomUUID()
               : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-          const filePath = `${user.id}/${suffix}-${file.name}`;
+          const fileName = buildUploadName(file, suffix);
+          const filePath = `${user.id}/${fileName}`;
           const { error } = await supabase.storage
             .from("listing-images")
-            .upload(filePath, file, { upsert: false });
+            .upload(filePath, file, {
+              upsert: false,
+              contentType: file.type || "image/jpeg",
+            });
           if (error) {
             return { error };
           }
@@ -357,14 +494,12 @@ export default function NewListingPage() {
                 className="w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-900 file:mr-4 file:rounded-full file:border-0 file:bg-red-600 file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.2em] file:text-white hover:file:bg-red-500"
                 id="image_uploads"
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
                 multiple
-                onChange={(event) =>
-                  setFiles(Array.from(event.target.files || []))
-                }
+                onChange={handleFileChange}
               />
               <div className="text-xs text-red-500/70">
-                Upload up to 6 images. The first image becomes the hero image.
+                Upload up to 6 images (JPG, PNG, WEBP, GIF, HEIC/HEIF). HEIC/HEIF files are converted to JPG automatically.
               </div>
             </div>
             <div className="grid gap-4 rounded-2xl border border-red-200/70 bg-white p-4">
@@ -405,7 +540,7 @@ export default function NewListingPage() {
                     <input
                       className={inputClass}
                       id="contact_name"
-                      placeholder="Hamdard Estate"
+                      placeholder={contactDefaults.name || "Hamdard Estate"}
                       value={form.contact_name}
                       onChange={(event) =>
                         setForm((prev) => ({
@@ -427,7 +562,7 @@ export default function NewListingPage() {
                   <input
                     className={inputClass}
                     id="contact_phone"
-                    placeholder="+92 300 1234567"
+                    placeholder={contactDefaults.phone || "+92 300 1234567"}
                     value={form.contact_phone}
                     onChange={(event) =>
                       setForm((prev) => ({
