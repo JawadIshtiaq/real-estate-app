@@ -3,6 +3,9 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 import ishtiaqPhoto from "@/components/ishtiaq-new.jpeg";
 import FawadPhoto from "@/public/Fawad.png";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function formatMoney(value) {
   if (value == null) return "—";
   if (typeof value === "number") {
