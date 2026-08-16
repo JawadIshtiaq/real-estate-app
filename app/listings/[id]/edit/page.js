@@ -5,11 +5,13 @@ import { useParams } from "next/navigation";
 import { getSupabase } from "@/lib/supabaseClient";
 import LoadingOverlay from "@/components/loading-overlay";
 
+const PRICE_UNITS = { Thousand: 1000, Lakh: 100000, Crore: 10000000 };
+
 const inputClass =
-  "h-12 w-full rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
+  "h-12 w-full rounded-2xl border border-red-200 bg-white px-4 text-base text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
 const textareaClass =
-  "min-h-[140px] w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-sm text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
-const labelClass = "text-xs uppercase tracking-[0.2em] text-red-500/70";
+  "min-h-[150px] w-full rounded-2xl border border-red-200 bg-white px-4 py-3 text-base leading-7 text-red-900 placeholder:text-red-300 transition focus:border-red-400 focus:ring-2 focus:ring-red-200";
+const labelClass = "text-sm font-semibold text-red-800";
 
 export default function EditListingPage() {
   const supabase = getSupabase();
@@ -68,7 +70,8 @@ export default function EditListingPage() {
 
       setForm({
         ...data,
-        price: data.price?.toString() ?? "",
+        price: data.price ? (Number(data.price) / 1000).toString() : "",
+        price_unit: "Thousand",
         beds: data.beds?.toString() ?? "0",
         baths: data.baths?.toString() ?? "0",
         sqft: data.sqft?.toString() ?? "0",
@@ -100,7 +103,7 @@ export default function EditListingPage() {
     const payload = {
       title: form.title,
       description: form.description,
-      price: Number(form.price),
+      price: Number(form.price) * PRICE_UNITS[form.price_unit],
       beds: Number(form.beds),
       baths: Number(form.baths),
       sqft: Number(form.sqft),
@@ -145,8 +148,8 @@ export default function EditListingPage() {
 
   if (status && !form) {
     return (
-      <div className="min-h-screen bg-white text-red-950">
-        <div className="mx-auto w-full max-w-2xl px-6 py-16 text-sm text-red-600/80">
+      <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 text-sm text-[#637069]">
           {status}
         </div>
       </div>
@@ -156,22 +159,33 @@ export default function EditListingPage() {
   if (!form) return null;
 
   return (
-    <div className="min-h-screen bg-white text-red-950">
+    <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
       <LoadingOverlay show={loading} label="Saving changes..." />
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-16">
-        <div>
-          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-6 py-10 lg:py-14">
+        <div className="relative overflow-hidden rounded-[32px] bg-[#17291f] px-7 py-9 text-[#fffdf8] shadow-[0_20px_50px_rgba(29,43,35,0.15)] sm:px-10">
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#b89b5e]/20 blur-3xl" />
+          <div className="relative text-[10px] uppercase tracking-[0.28em] text-[#d7bd83]">
             Edit listing
           </div>
-          <h1 className="mt-3 font-[var(--font-display)] text-3xl">
+          <h1 className="relative mt-3 font-[var(--font-display)] text-4xl sm:text-5xl">
             Update your ad
           </h1>
+          <p className="relative mt-3 max-w-2xl text-sm leading-6 text-white/70">
+            Keep your listing current with its latest price, details, location, and contact preferences.
+          </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="grid gap-4 rounded-3xl border border-red-200/70 bg-red-50 p-6"
+          className="premium-surface grid gap-6 rounded-[30px] border border-[#ded8ca] bg-[#fffdf8] p-6 sm:p-8"
         >
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[#ded8ca] pb-5">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.28em] text-[#9a7b3d]">Listing details</div>
+              <p className="mt-2 text-sm text-[#637069]">Your updates are saved directly to this property listing.</p>
+            </div>
+            <span className="rounded-full border border-[#d9d2c1] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[#756039]">Editing</span>
+          </div>
           <div className="grid gap-2">
             <label className={labelClass} htmlFor="title">
               Listing title
@@ -202,20 +216,38 @@ export default function EditListingPage() {
               }
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-4">
             <div className="grid gap-2">
               <label className={labelClass} htmlFor="price">
-                Price (PKR)
+                Price
               </label>
               <input
                 className={inputClass}
                 id="price"
+                type="number"
+                min="0"
+                step="0.01"
                 value={form.price}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, price: event.target.value }))
                 }
                 required
               />
+            </div>
+            <div className="grid gap-2">
+              <label className={labelClass} htmlFor="price_unit">Unit</label>
+              <select
+                className={inputClass}
+                id="price_unit"
+                value={form.price_unit}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, price_unit: event.target.value }))
+                }
+              >
+                <option value="Crore">Crore</option>
+                <option value="Lakh">Lakh</option>
+                <option value="Thousand">Thousand</option>
+              </select>
             </div>
             <div className="grid gap-2">
               <label className={labelClass} htmlFor="beds">
@@ -325,11 +357,11 @@ export default function EditListingPage() {
               }
             />
           </div>
-          <div className="grid gap-4 rounded-2xl border border-red-200/70 bg-white p-4">
+          <div className="grid gap-4 rounded-[22px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <div className={labelClass}>Ad poster</div>
-                <div className="text-xs text-red-500/70">
+                <div className="text-sm leading-6 text-red-500/70">
                   Toggle anonymous or show your name. Phone is always required.
                 </div>
               </div>
@@ -354,7 +386,7 @@ export default function EditListingPage() {
                 />
               </button>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
               {!form.contact_anonymous ? (
                 <div className="grid gap-2">
                   <label className={labelClass} htmlFor="contact_name">
@@ -373,7 +405,7 @@ export default function EditListingPage() {
                   />
                 </div>
               ) : (
-                <div className="text-xs text-red-500/70">
+                <div className="text-sm leading-6 text-red-500/70">
                   This ad will show as anonymous.
                 </div>
               )}
@@ -392,9 +424,9 @@ export default function EditListingPage() {
                     }))
                   }
                   required
-                />
+                  />
+                </div>
               </div>
-            </div>
           </div>
           <div className="grid gap-2">
             <label className={labelClass} htmlFor="status">
@@ -414,7 +446,7 @@ export default function EditListingPage() {
             </select>
           </div>
           <button
-            className="h-12 rounded-2xl bg-red-600 text-sm font-semibold text-white transition hover:bg-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.35)]"
+            className="h-12 rounded-2xl bg-[#1d3328] text-sm font-semibold text-white transition hover:bg-[#30483b]"
             type="submit"
           >
             Save changes

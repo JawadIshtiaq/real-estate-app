@@ -37,27 +37,29 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-red-950">
+    <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
       <LoadingOverlay show={loading} label="Authenticating..." />
-      <div className="mx-auto flex w-full max-w-lg flex-col gap-6 px-6 py-16">
-        <div>
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-7 px-6 py-10 lg:py-16">
+        <div className="relative overflow-hidden rounded-[32px] bg-[#17291f] px-7 py-9 text-[#fffdf8] shadow-[0_20px_50px_rgba(29,43,35,0.15)] sm:px-10">
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#b89b5e]/20 blur-3xl" />
           <a
-            className="text-xs uppercase tracking-[0.3em] text-red-500/70"
+            className="relative text-[10px] uppercase tracking-[0.28em] text-[#d7bd83] hover:text-white"
             href="/"
           >
             Back to home
           </a>
-          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+          <div className="relative mt-5 text-[10px] uppercase tracking-[0.28em] text-[#d7bd83]">
             Account
           </div>
-          <h1 className="mt-3 font-[var(--font-display)] text-3xl">
+          <h1 className="relative mt-3 font-[var(--font-display)] text-4xl sm:text-5xl">
             Sign in
           </h1>
+          <p className="relative mt-3 text-sm text-white/70">Access your saved profile and property dashboard.</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-3xl border border-red-200/70 bg-red-50 p-6"
+          className="premium-surface mx-auto w-full max-w-lg space-y-4 rounded-[30px] border border-[#ded8ca] bg-[#fffdf8] p-7 sm:p-8"
         >
           <input
             className="h-12 w-full rounded-2xl border border-red-200 bg-white px-4 text-sm text-red-900 placeholder:text-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-200"
@@ -76,7 +78,7 @@ export default function SignInPage() {
             required
           />
           <button
-            className="h-12 w-full rounded-2xl bg-red-600 text-sm font-semibold text-white transition hover:bg-red-500"
+            className="h-12 w-full rounded-2xl bg-[#1d3328] text-sm font-semibold text-white transition hover:bg-[#30483b]"
             type="submit"
           >
             Sign in

@@ -1,6 +1,7 @@
 import { getMarketSnapshot } from "@/lib/marketData";
 import { getSupabaseServer } from "@/lib/supabaseServer";
 import ishtiaqPhoto from "@/components/ishtiaq-new.jpeg";
+import AmjadPhoto from "@/components/Amjad.png";
 import FawadPhoto from "@/public/Fawad.png";
 
 export const dynamic = "force-dynamic";
@@ -78,6 +79,7 @@ const team = [
     whatsapp: "https://wa.me/923002000340",
     facebook: "https://www.facebook.com/share/1GqdmNSbEo/?mibextid=wwXIfr",
     photo: ishtiaqPhoto.src,
+    photoPosition: "center top",
   },
   {
     name: "Muhammad Naseer Khan",
@@ -95,7 +97,8 @@ const team = [
     phone: "+92 300 2223460",
     whatsapp: "https://wa.me/923002223460",
     facebook: "https://facebook.com/smamjad124",
-    photo: "",
+    photo: AmjadPhoto.src,
+    photoPosition: "center top",
   },  
   {
     name: "Muhammad Fawad Ishtiaq",
@@ -127,19 +130,54 @@ export default async function Home() {
   const news = market?.news ?? [];
 
   return (
-    <div className="min-h-screen bg-white text-red-950">
-      <section className="mx-auto w-full max-w-6xl space-y-10 px-6 py-20">
+    <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
+      <div className="relative overflow-hidden bg-[#17291f] text-[#fffdf8]">
+        <div className="premium-grid absolute inset-0 opacity-30" />
+        <div className="absolute -right-24 top-0 h-[440px] w-[440px] rounded-full bg-[#b89b5e]/20 blur-3xl" />
+        <section className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-6 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-28">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-[#d7bd83]">
+              <span className="h-px w-10 bg-[#b89b5e]" />
+              Karachi's private property desk
+            </div>
+            <h1 className="max-w-3xl font-[var(--font-display)] text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">
+              A more considered way to find your next address.
+            </h1>
+            <p className="max-w-xl text-base leading-7 text-[#d9e0d8]/80 sm:text-lg">
+              Exceptional homes, meaningful market intelligence, and personal advice from the first viewing to the final signature.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a className="rounded-full bg-[#b89b5e] px-6 py-3 text-sm font-semibold text-[#17241f] hover:bg-[#d7bd83]" href="/marketplace">Explore the collection</a>
+              <a className="rounded-full border border-white/25 px-6 py-3 text-sm font-semibold text-white hover:border-[#d7bd83]" href="#team">Speak with an advisor</a>
+            </div>
+          </div>
+          <div className="rounded-[32px] border border-white/15 bg-[#243a2f]/90 p-7 text-white shadow-[0_20px_50px_rgba(0,0,0,0.18)] backdrop-blur-sm sm:p-9">
+            <div className="text-[11px] uppercase tracking-[0.24em] text-[#d7bd83]">Find your place</div>
+            <p className="mt-3 font-[var(--font-display)] text-3xl leading-tight text-white">A tailored search begins here.</p>
+            <div className="mt-7 grid gap-3">
+              <input className="h-12 rounded-2xl border border-white/15 bg-white/10 px-4 text-sm text-white placeholder:text-white/45" placeholder="City or neighbourhood" />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <input className="h-12 rounded-2xl border border-white/15 bg-white/10 px-4 text-sm text-white placeholder:text-white/45" placeholder="Property type" />
+                <input className="h-12 rounded-2xl border border-white/15 bg-white/10 px-4 text-sm text-white placeholder:text-white/45" placeholder="Budget" />
+              </div>
+              <a className="mt-2 rounded-2xl bg-[#fffdf8] px-5 py-3 text-center text-sm font-semibold text-[#17241f] hover:bg-[#d7bd83]" href="/marketplace">Search properties</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section className="mx-auto w-full max-w-7xl space-y-10 px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
-              Featured listings
+              The collection
             </div>
             <h2 className="mt-3 font-[var(--font-display)] text-3xl">
-              Distinctive homes across the city.
+              Selected homes, exceptional locations.
             </h2>
           </div>
           <a
-            className="rounded-full border border-red-300 px-4 py-2 text-sm text-red-800"
+            className="rounded-full border border-[#b89b5e] px-4 py-2 text-sm text-[#564728] hover:bg-[#fffdf8]"
             href="/marketplace"
           >
             View all listings
@@ -150,38 +188,38 @@ export default async function Home() {
           {featuredListings.map((listing) => (
             <article
               key={listing.id}
-              className="rounded-[28px] border border-red-200/70 bg-white p-6 transition hover:-translate-y-1 hover:border-red-300"
+                className="group flex h-full flex-col rounded-[28px] border border-[#e2ddd1] bg-[#fffdf8] p-4 shadow-[0_10px_35px_rgba(29,43,35,0.05)] transition hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(29,43,35,0.12)]"
             >
-              <div className="h-40 overflow-hidden rounded-2xl border border-red-200/70 bg-red-50">
+              <div className="h-52 overflow-hidden rounded-[20px] bg-[#e9e6dc]">
                 {listing.hero_image_url ? (
                   <img
                     alt={listing.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full origin-top object-cover transition duration-500 group-hover:scale-105"
                     src={listing.hero_image_url}
                   />
                 ) : null}
               </div>
-              <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-red-500/70">
+              <div className="mt-5 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[#7a8278]">
                 <span>
                   {listing.neighborhood || listing.city || listing.location}
                 </span>
-                <span className="rounded-full border border-red-300 px-3 py-1 text-[10px] text-red-700">
+                <span className="rounded-full border border-[#d9d2c1] px-3 py-1 text-[10px] text-[#756039]">
                   {listing.status || listing.tag || "Featured"}
                 </span>
               </div>
               <h3 className="mt-6 font-[var(--font-display)] text-xl">
                 {listing.title}
               </h3>
-              <div className="mt-2 text-2xl font-semibold text-red-700">
+              <div className="mt-2 text-2xl font-semibold text-[#1d3328]">
                 {formatMoney(listing.price)}
               </div>
-              <div className="mt-4 flex flex-wrap gap-4 text-sm text-red-700/80">
+              <div className="mt-4 flex flex-wrap gap-4 text-sm text-[#59645d]">
                 <span>{listing.beds} beds</span>
                 <span>{listing.baths} baths</span>
                 <span>{listing.sqft} {listing.area_unit || "sq ft"}</span>
               </div>
               <a
-                className="mt-6 block w-full rounded-2xl bg-red-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-red-500"
+                className="mt-auto block w-full rounded-2xl bg-[#1d3328] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#30483b]"
                 href={`/marketplace/${listing.id}`}
               >
                 View details
@@ -191,7 +229,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="relative overflow-hidden">
+      <div className="relative hidden overflow-hidden">
         <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-gradient-to-br from-red-500/25 via-rose-400/20 to-transparent blur-3xl" />
         <div className="absolute left-0 top-32 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-red-300/25 via-rose-200/10 to-transparent blur-3xl" />
 
@@ -260,10 +298,10 @@ export default async function Home() {
         </section>
       </div>
 
-      <section className="bg-red-50 py-20">
+      <section className="border-y border-[#ded8ca] bg-[#ece8df] py-20">
         <div className="mx-auto w-full max-w-6xl space-y-10 px-6">
           <div>
-            <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+            <div className="text-[10px] uppercase tracking-[0.28em] text-[#9a7b3d]">
               Karachi districts
             </div>
             <h2 className="mt-3 font-[var(--font-display)] text-3xl">
@@ -274,16 +312,16 @@ export default async function Home() {
             {neighborhoods.map((hood) => (
               <div
                 key={hood.name}
-                className="rounded-[28px] border border-red-200/70 bg-white p-6"
+                className="rounded-[28px] border border-[#ded8ca] bg-[#fffdf8] p-7 shadow-[0_12px_35px_rgba(29,43,35,0.05)] transition hover:-translate-y-1 hover:shadow-[0_20px_42px_rgba(29,43,35,0.10)]"
               >
                 <h3 className="font-[var(--font-display)] text-xl">
                   {hood.name}
                 </h3>
-                <div className="mt-2 text-sm text-red-600/80">
+                <div className="mt-2 text-sm text-[#756039]">
                   {hood.homes}
                 </div>
-                <p className="mt-4 text-sm text-red-700/80">{hood.vibe}</p>
-                <button className="mt-6 text-xs uppercase tracking-[0.2em] text-red-600">
+                <p className="mt-4 text-sm leading-6 text-[#59645d]">{hood.vibe}</p>
+                <button className="mt-6 text-[10px] uppercase tracking-[0.2em] text-[#9a7b3d]">
                   Explore district
                 </button>
               </div>
@@ -292,17 +330,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="team" className="mx-auto w-full max-w-6xl space-y-10 px-6 py-20">
+      <section id="team" className="mx-auto w-full max-w-7xl space-y-10 px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+            <div className="text-[10px] uppercase tracking-[0.28em] text-[#9a7b3d]">
               Leadership
             </div>
             <h2 className="mt-3 font-[var(--font-display)] text-3xl">
               The people guiding Hamdard Estate.
             </h2>
           </div>
-          <button className="rounded-full border border-red-300 px-4 py-2 text-sm text-red-800">
+          <button className="rounded-full border border-[#b89b5e] px-4 py-2 text-sm text-[#564728] hover:bg-[#fffdf8]">
             Meet the team
           </button>
         </div>
@@ -311,17 +349,18 @@ export default async function Home() {
           {team.map((member) => (
             <div
               key={member.name}
-              className="rounded-[28px] border border-red-200/70 bg-white p-6"
+              className="group rounded-[28px] border border-[#ded8ca] bg-[#fffdf8] p-5 shadow-[0_12px_35px_rgba(29,43,35,0.05)]"
             >
-              <div className="aspect-square w-full overflow-hidden rounded-2xl border border-red-200/70 bg-red-50">
+              <div className="aspect-square w-full overflow-hidden rounded-[20px] bg-[#e8e5dc]">
                 {member.photo ? (
                   <img
                     alt={member.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     src={member.photo}
+                    style={{ objectPosition: member.photoPosition || "center" }}
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-red-500/70">
+                  <div className="flex h-full w-full items-center justify-center text-[#9a7b3d]">
                     <svg
                       aria-hidden="true"
                       width="64"
@@ -338,9 +377,9 @@ export default async function Home() {
                 )}
               </div>
               <div className="mt-4 text-sm font-semibold">{member.name}</div>
-              <div className="text-xs text-red-600/80">{member.role}</div>
+              <div className="text-xs text-[#756039]">{member.role}</div>
               <a
-                className="mt-1 inline-block text-xs text-red-600/80 underline decoration-red-300 underline-offset-2 transition hover:text-red-800"
+                className="mt-1 inline-block text-xs text-[#637069] underline decoration-[#b89b5e] underline-offset-2 transition hover:text-[#1d3328]"
                 href={`tel:${member.phone.replace(/\s+/g, "")}`}
                 aria-label={`Call ${member.name} at ${member.phone}`}
               >
@@ -348,7 +387,7 @@ export default async function Home() {
               </a>
               <div className="mt-3 flex gap-2">
                 <a
-                  className="rounded-full border border-red-300 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-red-800 transition hover:border-red-400"
+                  className="rounded-full border border-[#d9d2c1] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[#564728] transition hover:border-[#b89b5e]"
                   href={member.whatsapp}
                   target="_blank"
                   rel="noreferrer"
@@ -356,7 +395,7 @@ export default async function Home() {
                   WhatsApp
                 </a>
                 <a
-                  className="rounded-full border border-red-300 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-red-800 transition hover:border-red-400"
+                  className="rounded-full border border-[#d9d2c1] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[#564728] transition hover:border-[#b89b5e]"
                   href={member.facebook}
                   target="_blank"
                   rel="noreferrer"
@@ -364,16 +403,16 @@ export default async function Home() {
                   Facebook
                 </a>
               </div>
-              <p className="mt-3 text-xs text-red-600/80">{member.bio}</p>
+              <p className="mt-3 text-xs leading-5 text-[#637069]">{member.bio}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-white py-16">
+      <section className="border-t border-[#ded8ca] bg-[#fffdf8] py-16">
         <div className="mx-auto w-full max-w-6xl space-y-6 px-6">
           <div>
-            <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+            <div className="text-[10px] uppercase tracking-[0.28em] text-[#9a7b3d]">
               Market headlines
             </div>
             <h2 className="mt-3 font-[var(--font-display)] text-3xl">
@@ -384,16 +423,16 @@ export default async function Home() {
             {(news.length ? news.slice(0, 6) : []).map((item, index) => (
               <a
                 key={`${item.source}-${item.title}-${index}`}
-                className="rounded-2xl border border-red-200/70 bg-red-50 p-4 text-sm text-red-800 transition hover:border-red-300"
+                className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5 text-sm text-[#30483b] transition hover:border-[#b89b5e]"
                 href={item.link}
                 target="_blank"
                 rel="noreferrer"
               >
-                <div className="text-xs uppercase tracking-[0.2em] text-red-500/70">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-[#9a7b3d]">
                   {item.source}
                 </div>
                 <div className="mt-2 font-semibold">{item.title}</div>
-                <div className="mt-2 text-xs text-red-500/70">
+                <div className="mt-2 text-xs text-[#7a8278]">
                   {item.pubDate || "Recent"}
                 </div>
               </a>
@@ -407,23 +446,24 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-red-200 via-rose-100 to-white py-20 text-red-900">
-        <div className="absolute -right-20 top-10 h-64 w-64 rounded-full bg-red-200/50 blur-3xl" />
-        <div className="absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-red-100/60 blur-3xl" />
+      <section className="relative overflow-hidden bg-[#17291f] py-20 text-[#fffdf8]">
+        <div className="premium-grid absolute inset-0 opacity-30" />
+        <div className="absolute -right-20 top-10 h-64 w-64 rounded-full bg-[#b89b5e]/25 blur-3xl" />
+        <div className="absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-[#6b8a73]/20 blur-3xl" />
         <div className="relative mx-auto w-full max-w-6xl space-y-6 px-6 text-center">
-          <div className="text-xs uppercase tracking-[0.3em] text-red-600">
+          <div className="text-[10px] uppercase tracking-[0.28em] text-[#d7bd83]">
             Ready when you are
           </div>
           <h2 className="font-[var(--font-display)] text-4xl">
             Let’s map your next move together.
           </h2>
-          <p className="mx-auto max-w-2xl text-sm text-red-700">
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-white/70">
             Private tours, in-depth pricing intelligence, and access to upcoming
             inventory before it hits the market.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white"
+              className="rounded-full bg-[#b89b5e] px-6 py-3 text-sm font-semibold text-[#17241f] hover:bg-[#d7bd83]"
               href="#team"
             >
               Start a consultation
@@ -432,12 +472,12 @@ export default async function Home() {
         </div>
       </section>
 
-      <footer className="mx-auto w-full max-w-6xl px-6 py-12 text-sm text-red-600/80">
+      <footer className="mx-auto w-full max-w-7xl px-6 py-12 text-sm text-[#637069]">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="font-[var(--font-display)] text-lg text-red-900">
+          <div className="font-[var(--font-display)] text-lg text-[#17291f]">
             Hamdard Estate
           </div>
-          <div className="flex flex-wrap gap-6 text-xs uppercase tracking-[0.2em] text-red-600">
+          <div className="flex flex-wrap gap-6 text-[10px] uppercase tracking-[0.18em] text-[#7a8278]">
             <span>Privacy</span>
             <span>Terms</span>
             <span>Careers</span>

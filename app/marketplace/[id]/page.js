@@ -20,6 +20,12 @@ function phoneToTel(phone) {
   return cleaned.startsWith("+") ? cleaned : cleaned.replace(/\+/g, "");
 }
 
+function phoneToWhatsapp(phone) {
+  let digits = String(phone || "").replace(/\D/g, "");
+  if (digits.startsWith("0")) digits = `92${digits.slice(1)}`;
+  return digits;
+}
+
 export default function ListingDetailPage() {
   const supabase = getSupabase();
   const routeParams = useParams();
@@ -97,8 +103,8 @@ export default function ListingDetailPage() {
 
   if (status) {
     return (
-      <div className="min-h-screen bg-white text-red-950">
-        <div className="mx-auto w-full max-w-5xl px-6 py-16 text-sm text-red-600/80">
+      <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
+        <div className="mx-auto w-full max-w-7xl px-6 py-16 text-sm text-[#637069]">
           {status}
         </div>
       </div>
@@ -118,34 +124,39 @@ export default function ListingDetailPage() {
   const currentImage =
     allImages.length > 0 ? allImages[activeIndex % allImages.length] : null;
   const telHref = phoneToTel(listing.contact_phone);
+  const whatsappNumber = phoneToWhatsapp(listing.contact_phone);
+  const whatsappHref = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+        `Hello, I am interested in ${listing.title}. Is it still available?`
+      )}`
+    : "";
 
   return (
-    <div className="min-h-screen bg-white text-red-950">
-      <div className="mx-auto w-full max-w-5xl space-y-8 px-6 py-16">
-        <div>
-          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
-            {listing.neighborhood || listing.city || "Citywide"}
+    <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
+      <div className="mx-auto w-full max-w-7xl space-y-9 px-6 py-12 lg:py-16">
+        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-[#d9d2c1] pb-8">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.28em] text-[#9a7b3d]">
+              {listing.neighborhood || listing.city || "Citywide"}
+            </div>
+            <h1 className="mt-3 max-w-3xl font-sans text-4xl font-semibold leading-[1.08] tracking-[-0.035em] sm:text-5xl">
+              {listing.title}
+            </h1>
           </div>
-          <h1 className="mt-3 font-[var(--font-display)] text-4xl">
-            {listing.title}
-          </h1>
-          <div className="mt-2 text-2xl font-semibold text-red-700">
-            {formatMoney(listing.price)}
-          </div>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-red-700/80">
-            <span>{listing.beds} beds</span>
-            <span>{listing.baths} baths</span>
-            <span>{listing.sqft} {listing.area_unit || "sq ft"}</span>
-            <span className="rounded-full border border-red-200 px-3 py-1 text-xs uppercase tracking-[0.2em]">
+          <div className="text-left sm:text-right">
+            <div className="font-sans text-3xl font-semibold tracking-[-0.025em] text-[#1d3328]">
+              {formatMoney(listing.price)}
+            </div>
+            <span className="mt-2 inline-block rounded-full border border-[#c9bea8] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[#756039]">
               {listing.status}
             </span>
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
           <div className="space-y-4">
-            <div className="overflow-hidden rounded-[28px] border border-red-200/70 bg-white">
-              <div className="aspect-[16/10] w-full bg-red-50">
+            <div className="overflow-hidden rounded-[30px] border border-[#ded8ca] bg-[#e8e5dc] shadow-[0_18px_50px_rgba(29,43,35,0.10)]">
+              <div className="aspect-[16/10] w-full bg-[#e8e5dc]">
                 {currentImage?.image_url ? (
                   <img
                     alt={listing.title}
@@ -157,13 +168,13 @@ export default function ListingDetailPage() {
             </div>
             {allImages.length ? (
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-red-500/70">
+                <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[#7a8278]">
                   <span>
                     {activeIndex + 1} / {allImages.length}
                   </span>
                   <div className="flex items-center gap-2">
                     <button
-                      className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                      className="rounded-full border border-[#d9d2c1] px-3 py-1 text-[#314137] hover:border-[#b89b5e]"
                       onClick={() =>
                         setActiveIndex((prev) =>
                           prev === 0 ? allImages.length - 1 : prev - 1
@@ -173,7 +184,7 @@ export default function ListingDetailPage() {
                       Prev
                     </button>
                     <button
-                      className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                      className="rounded-full border border-[#d9d2c1] px-3 py-1 text-[#314137] hover:border-[#b89b5e]"
                       onClick={() =>
                         setActiveIndex((prev) =>
                           (prev + 1) % allImages.length
@@ -190,9 +201,9 @@ export default function ListingDetailPage() {
                       key={`${image.id}-${index}`}
                       className={`aspect-[4/3] overflow-hidden rounded-2xl border ${
                         index === activeIndex
-                          ? "border-red-500"
-                          : "border-red-200"
-                      } bg-white`}
+                          ? "border-[#b89b5e]"
+                          : "border-[#ded8ca]"
+                      } bg-[#fffdf8]`}
                       onClick={() => setActiveIndex(index)}
                     >
                       <img
@@ -203,29 +214,29 @@ export default function ListingDetailPage() {
                     </button>
                   ))}
                 </div>
-                <div className="text-xs text-red-500/70">
+                <div className="text-xs text-[#7a8278]">
                   Tip: use left/right arrow keys to browse photos.
                 </div>
               </div>
             ) : null}
           </div>
-          <div className="space-y-4">
-            <div className="rounded-[28px] border border-red-200/70 bg-red-50 p-6 text-sm text-red-700/80">
-              <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+          <div className="space-y-5">
+            <div className="rounded-[28px] border border-[#ded8ca] bg-[#fffdf8] p-7 text-base leading-8 text-[#435149] shadow-[0_12px_35px_rgba(29,43,35,0.05)]">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#756039]">
                 Overview
               </div>
               <p className="mt-4">
                 {listing.description || "No description provided yet."}
               </p>
             </div>
-            <div className="rounded-[28px] border border-red-200/70 bg-red-50 p-6 text-sm text-red-700/80">
-              <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
-                Next steps
+            <div className="rounded-[28px] bg-[#1d3328] p-7 text-base leading-8 text-[#ecf0ec] shadow-[0_18px_45px_rgba(29,43,35,0.16)]">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#d7bd83]">
+                Private viewing
               </div>
               <p className="mt-4">
                 Contact the seller or schedule a tour using the inquiry form.
               </p>
-              <div className="mt-4 text-xs text-red-600/80">
+              <div className="mt-5 border-t border-white/15 pt-5 text-sm font-medium text-[#ecf0ec]/85">
                 {listing.contact_anonymous ? (
                   <>
                     Contact:{" "}
@@ -251,13 +262,28 @@ export default function ListingDetailPage() {
                 )}
               </div>
               <a
-                className="mt-6 inline-flex rounded-full bg-red-600 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white"
+                className="mt-7 inline-flex rounded-full bg-[#b89b5e] px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#17241f] hover:bg-[#d7bd83]"
                 href="/marketplace"
               >
                 Back to marketplace
               </a>
+              {whatsappHref ? (
+                <a
+                  className="mt-3 inline-flex rounded-full border border-white/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white hover:border-[#d7bd83] hover:text-[#d7bd83]"
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  WhatsApp the seller
+                </a>
+              ) : null}
             </div>
           </div>
+        </div>
+        <div className="grid gap-3 border-t border-[#d9d2c1] pt-6 text-base text-[#536058] sm:grid-cols-3">
+          <div className="rounded-2xl bg-[#fffdf8] px-4 py-3"><strong className="font-semibold text-[#1d3328]">{listing.beds}</strong> bedrooms</div>
+          <div className="rounded-2xl bg-[#fffdf8] px-4 py-3"><strong className="font-semibold text-[#1d3328]">{listing.baths}</strong> bathrooms</div>
+          <div className="rounded-2xl bg-[#fffdf8] px-4 py-3"><strong className="font-semibold text-[#1d3328]">{listing.sqft}</strong> {listing.area_unit || "sq ft"}</div>
         </div>
       </div>
     </div>

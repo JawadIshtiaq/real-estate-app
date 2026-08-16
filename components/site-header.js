@@ -60,49 +60,51 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-red-200/70 bg-white/90 backdrop-blur">
-      <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-5">
+      <nav className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 rounded-[22px] border border-[#d9d2c1]/90 bg-[#fffdf8]/95 px-4 py-3 shadow-[0_12px_35px_rgba(29,43,35,0.10)] backdrop-blur-xl sm:px-5">
         <div className="flex items-center gap-3">
           <a
-            className="flex items-center gap-2 font-[var(--font-display)] text-2xl tracking-tight"
+            className="flex items-center gap-3 font-[var(--font-display)] text-xl font-medium tracking-[-0.03em] text-[#18271f] sm:text-2xl"
             href="/"
+            aria-label="Property marketplace home"
           >
-            <img
-              src="/house-svgrepo-com.svg"
-              alt="Hamdard Estate"
-              className="h-8 w-8 rounded-md object-contain"
-            />
-            <span>Hamdard Estate</span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1d3328] font-sans text-sm font-semibold tracking-[0.08em] text-[#d7bd83] shadow-[0_4px_12px_rgba(29,43,35,0.18)]">
+              HE
+            </span>
+            <span className="hidden sm:block">Hamdard Estate</span>
           </a>
           {pathname && pathname !== "/" ? (
             <button
-              className="rounded-full border border-white/20 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white"
+              className="rounded-full border border-[#b89b5e]/50 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#6a5730]"
               onClick={() => window.history.back()}
             >
               Back
             </button>
           ) : null}
         </div>
-        <div className="hidden items-center gap-6 text-xs uppercase tracking-[0.2em] text-red-700/70 md:flex">
-          <a className="hover:text-white" href="/marketplace">
+        <div className="hidden items-center gap-1 rounded-full border border-[#e2ddd1] bg-[#f7f5f0] p-1 text-[10px] font-medium uppercase tracking-[0.14em] text-[#536058] lg:flex">
+          <a className="rounded-full px-3 py-2 hover:bg-white hover:text-[#9a7b3d]" href="/marketplace">
             Listings
           </a>
-          <a className="hover:text-white" href="/listings">
+          <a className="rounded-full px-3 py-2 hover:bg-white hover:text-[#9a7b3d]" href="/testimonials">
+            Testimonials
+          </a>
+          <a className="rounded-full px-3 py-2 hover:bg-white hover:text-[#9a7b3d]" href="/listings">
             My ads
           </a>
-          <a className="hover:text-white" href="/account">
+          <a className="rounded-full px-3 py-2 hover:bg-white hover:text-[#9a7b3d]" href="/account">
             Account
           </a>
         </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em]">
+          <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em]">
             {user ? (
               <>
                 <div className="flex items-center gap-2">
                   <button
-                    className={`rounded-full border px-3 py-1 ${
+                    className={`rounded-full border px-3 py-2 ${
                       role === "buyer"
-                        ? "border-red-500 bg-red-500/10 text-red-800"
-                        : "border-red-200 text-red-700/70"
+                        ? "border-[#a88442] bg-[#b89b5e]/15 text-[#47391e]"
+                        : "border-[#d9d2c1] text-[#536058]"
                     }`}
                     onClick={() => switchRole("buyer")}
                     disabled={switchingRole}
@@ -110,10 +112,10 @@ export default function SiteHeader() {
                     Buyer
                   </button>
                   <button
-                    className={`rounded-full border px-3 py-1 ${
+                    className={`rounded-full border px-3 py-2 ${
                       role === "seller"
-                        ? "border-red-500 bg-red-500/10 text-red-800"
-                        : "border-red-200 text-red-700/70"
+                        ? "border-[#a88442] bg-[#b89b5e]/15 text-[#47391e]"
+                        : "border-[#d9d2c1] text-[#536058]"
                     }`}
                     onClick={() => switchRole("seller")}
                     disabled={switchingRole}
@@ -122,35 +124,35 @@ export default function SiteHeader() {
                   </button>
                 </div>
                 <a
-                  className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                  className="rounded-full border border-[#d9d2c1] px-3 py-2 text-[#314137] hover:border-[#b89b5e]"
                   href="/account"
                 >
                   Account
                 </a>
                 <button
-                  className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                  className="rounded-full border border-[#d9d2c1] px-3 py-2 text-[#314137] hover:border-[#b89b5e]"
                   onClick={signOut}
                   disabled={switchingRole}
                 >
                   Sign out
                 </button>
                 {status ? (
-                  <span className="text-[10px] text-red-500">{status}</span>
+                  <span className="text-[10px] text-[#9a7b3d]">{status}</span>
                 ) : null}
                 {switchingRole ? (
-                  <span className="text-[10px] text-red-500">Updating...</span>
+                  <span className="text-[10px] text-[#9a7b3d]">Updating...</span>
                 ) : null}
               </>
             ) : (
               <>
                 <a
-                  className="rounded-full border border-red-300 px-3 py-1 text-red-800"
+                  className="rounded-full border border-[#d9d2c1] px-3 py-2 text-[#314137] hover:border-[#b89b5e]"
                   href="/sign-in"
                 >
                   Sign in
                 </a>
                 <a
-                  className="rounded-full bg-red-600 px-3 py-1 text-white"
+                  className="rounded-full bg-[#1d3328] px-4 py-2 text-white shadow-[0_5px_14px_rgba(29,43,35,0.18)] hover:bg-[#30483b]"
                   href="/sign-up"
                 >
                   Sign up

@@ -97,25 +97,26 @@ export default function ListingsDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-red-950">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-16">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-6 py-10 lg:py-14">
+        <div className="relative flex flex-wrap items-end justify-between gap-5 overflow-hidden rounded-[32px] bg-[#17291f] px-7 py-9 text-[#fffdf8] shadow-[0_20px_50px_rgba(29,43,35,0.15)] sm:px-10">
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#b89b5e]/20 blur-3xl" />
           <div>
             <a
-              className="text-xs uppercase tracking-[0.3em] text-red-500/70"
+              className="relative text-[10px] uppercase tracking-[0.28em] text-[#d7bd83] hover:text-white"
               href="/"
             >
               Back to home
             </a>
-            <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+            <div className="relative mt-5 text-[10px] uppercase tracking-[0.28em] text-[#d7bd83]">
               Listings
             </div>
-            <h1 className="mt-3 font-[var(--font-display)] text-3xl">
+            <h1 className="relative mt-3 font-[var(--font-display)] text-4xl sm:text-5xl">
               Your ads
             </h1>
           </div>
           <a
-            className="rounded-full border border-red-300 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-800"
+            className="relative rounded-full bg-[#b89b5e] px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#17241f] hover:bg-[#d7bd83]"
             href="/listings/new"
           >
             Post a new ad
@@ -141,7 +142,7 @@ export default function ListingsDashboard() {
                 return (
                   <div
                     key={listing.id}
-                    className="rounded-3xl border border-red-200/70 bg-white p-6"
+                    className="rounded-[26px] border border-[#ded8ca] bg-[#fffdf8] p-6 shadow-[0_12px_35px_rgba(29,43,35,0.05)]"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>

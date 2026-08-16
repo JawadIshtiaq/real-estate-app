@@ -1,35 +1,21 @@
-import { DM_Sans, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import SiteHeader from "@/components/site-header";
 
-const dmSans = DM_Sans({
-  variable: "--font-body",
-  subsets: ["latin"],
-});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
 export const metadata = {
-  title: "Hamdard Estate | Signature Real Estate",
+  title: "Karachi Property Marketplace",
   description:
-    "Hamdard Estate pairs architectural standouts with data-driven market intelligence.",
+    "A curated Karachi property marketplace with seller tools and market intelligence.",
   icons: {
-    icon: "/house-svgrepo-com.svg",
-    shortcut: "/house-svgrepo-com.svg",
-    apple: "/house-svgrepo-com.svg",
+    icon: "/he-mark.svg?v=2",
+    shortcut: "/he-mark.svg?v=2",
+    apple: "/he-mark.svg?v=2",
   },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${dmSans.variable} ${cormorant.variable} font-[var(--font-body)] antialiased`}
-      >
+      <body className="font-[var(--font-body)] antialiased">
         <SiteHeader />
         {children}
       </body>

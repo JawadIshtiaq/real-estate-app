@@ -187,29 +187,31 @@ export default function AccountPage() {
   const lastSignIn = formatDate(user?.last_sign_in_at);
 
   return (
-    <div className="min-h-screen bg-white text-red-950">
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-16">
-        <div>
+    <div className="min-h-screen bg-[#f7f5f0] text-[#17241f]">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-6 py-10 lg:py-14">
+        <div className="relative overflow-hidden rounded-[32px] bg-[#17291f] px-7 py-9 text-[#fffdf8] shadow-[0_20px_50px_rgba(29,43,35,0.15)] sm:px-10">
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#b89b5e]/20 blur-3xl" />
           <a
-            className="text-xs uppercase tracking-[0.3em] text-red-500/70"
+            className="relative text-[10px] uppercase tracking-[0.28em] text-[#d7bd83] hover:text-white"
             href="/"
           >
             Back to home
           </a>
-          <div className="text-xs uppercase tracking-[0.3em] text-red-500/70">
+          <div className="relative mt-5 text-[10px] uppercase tracking-[0.28em] text-[#d7bd83]">
             Account
           </div>
-          <h1 className="mt-3 font-[var(--font-display)] text-3xl">
+          <h1 className="relative mt-3 font-[var(--font-display)] text-4xl sm:text-5xl">
             Your profile
           </h1>
+          <p className="relative mt-3 text-sm text-white/70">Your details, account activity, and listing profile in one place.</p>
         </div>
 
-        <div className="rounded-3xl border border-red-200/70 bg-red-50 p-6 text-sm text-red-700/80">
+        <div className="premium-surface rounded-[30px] border border-[#ded8ca] bg-[#fffdf8] p-6 text-sm text-[#536058] sm:p-8">
           {status ? <div>{status}</div> : null}
           {user ? (
             <div className="space-y-6">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Full name
                   </div>
@@ -228,7 +230,7 @@ export default function AccountPage() {
                     </div>
                   )}
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Email
                   </div>
@@ -236,7 +238,7 @@ export default function AccountPage() {
                     {email}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Phone number
                   </div>
@@ -255,7 +257,7 @@ export default function AccountPage() {
                     </div>
                   )}
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Real estate agency
                   </div>
@@ -274,7 +276,7 @@ export default function AccountPage() {
                     </div>
                   )}
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Member since
                   </div>
@@ -282,7 +284,7 @@ export default function AccountPage() {
                     {memberSince}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Last sign in
                   </div>
@@ -290,7 +292,7 @@ export default function AccountPage() {
                     {lastSignIn}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Total listings
                   </div>
@@ -298,7 +300,7 @@ export default function AccountPage() {
                     {listingStats.total}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Active / Pending / Sold
                   </div>
@@ -306,7 +308,7 @@ export default function AccountPage() {
                     {listingStats.active} / {listingStats.pending} / {listingStats.sold}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-red-200/70 bg-white p-4">
+                  <div className="rounded-[20px] border border-[#ded8ca] bg-[#f7f5f0] p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-red-500/70">
                     Listing contact name
                   </div>
